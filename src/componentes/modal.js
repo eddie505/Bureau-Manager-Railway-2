@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable */
+import React from "react";
 
 const Modal = ({ isOpen, close, children }) => {
   if (!isOpen) return null;
@@ -11,6 +12,6 @@ const Modal = ({ isOpen, close, children }) => {
       </div>
     </div>
   );
-}
+};
 
 export default Modal;

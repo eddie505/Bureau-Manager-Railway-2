@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect } from "react";
 import NuevoInquilino from "./nuevoInquilino.js";
 import EditoInquilino from "./edicionInquilino.js";

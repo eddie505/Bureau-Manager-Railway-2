@@ -1,18 +1,19 @@
-const express = require('express');
-const mysql = require('mysql2');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const nodemailer = require('nodemailer');
-const fs = require('fs');
-const app = express();
-const path = require('path');
-const fontkit = require('@pdf-lib/fontkit');
-require('dotenv').config();
+import express from "express";
+import mysql from "mysql2";
+import bodyParser from "body-parser";
+import cors from "cors";
+import nodemailer from "nodemailer";
+import fs from "fs";
+import path from "path";
+import fontkit from "@pdf-lib/fontkit";
+import dotenv from "dotenv";
+dotenv.config();
 
-const jwt = require('jsonwebtoken');
+const app = express();
+import jwt from "jsonwebtoken";
 const secretKey = process.env.SECRET_KEY;
 
-const bcrypt = require('bcrypt');
+import bcrypt from "bcrypt";
 const saltRounds = 10;
 
 //const CryptoJS = require("crypto-js");
@@ -21,15 +22,15 @@ const saltRounds = 10;
 app.use(cors());
 
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'n0m3l0',
-  database: 'bureau-manager'
+  host: "localhost",
+  user: "root",
+  password: "n0m3l0",
+  database: "bureau-manager",
 });
 
-connection.connect(error => {
+connection.connect((error) => {
   if (error) throw error;
-  console.log('Conexión a la base de datos MySQL establecida');
+  console.log("Conexión a la base de datos MySQL establecida");
 });
 
 // Configurar body-parser para manejar solicitudes POST
@@ -39,11 +40,11 @@ app.use(bodyParser.json());
 // Permitir solicitudes CORS desde cualquier origen
 app.use(cors());
 
-const { PDFDocument, rgb } = require('pdf-lib');
+import { PDFDocument, rgb } from "pdf-lib";
 
-async function crearPDFImagen(datos){
-  const imagePath = path.join(__dirname, './formato_recibo.PNG');
-  const fontPath = path.join(__dirname, './Arial.ttf');
+async function crearPDFImagen(datos) {
+  const imagePath = path.join(__dirname, "./formato_recibo.PNG");
+  const fontPath = path.join(__dirname, "./Arial.ttf");
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
   const [width, height] = [612, 792]; //tamaño de una hoja tamaño carta
@@ -53,53 +54,194 @@ async function crearPDFImagen(datos){
   const imagen = await pdfDoc.embedPng(imagenBytes);
 
   const scaleX = width / imagen.width;
-  const scaleY = (height/2) / imagen.height;
+  const scaleY = height / 2 / imagen.height;
   const scale = Math.min(scaleX, scaleY);
 
-  page.drawImage(imagen,{
-    x:0,
-    y:height/2,
-    width:imagen.width*scale,
-    height:imagen.height*scale,
+  page.drawImage(imagen, {
+    x: 0,
+    y: height / 2,
+    width: imagen.width * scale,
+    height: imagen.height * scale,
   });
 
   const fontColor = rgb(0, 0, 0);
   const font = await pdfDoc.embedFont(fs.readFileSync(fontPath));
   const colorRed = rgb(1, 0, 0);
-  const textwidthdir = font.widthOfTextAtSize(datos.direccion_condominio || '', 8);
-  const textwidthNC = font.widthOfTextAtSize(`${datos.nombre_condominio} - ${datos.nombre_edificio}` || '', 11);
-  const textwidthTPL = font.widthOfTextAtSize(`SON: (${datos.total_pagar_letra})` || '', 9);
+  const textwidthdir = font.widthOfTextAtSize(
+    datos.direccion_condominio || "",
+    8
+  );
+  const textwidthNC = font.widthOfTextAtSize(
+    `${datos.nombre_condominio} - ${datos.nombre_edificio}` || "",
+    11
+  );
+  const textwidthTPL = font.widthOfTextAtSize(
+    `SON: (${datos.total_pagar_letra})` || "",
+    9
+  );
 
-  page.drawText(datos.nombre_completo_inquilino || '', {x: 125,y: height - 133,size: 13,color: fontColor,font: font});
-  page.drawText(datos.direccion_condominio || '', {x: width-textwidthdir-20,y: height - 76,size: 8,color: fontColor,font: font});
-  page.drawText(datos.no_recibo || '', {x: 532,y: height - 63,size: 13,color: colorRed,font: font});
-  page.drawText(`${datos.nombre_condominio} - ${datos.nombre_edificio}` || '', {x: width-textwidthNC-20,y: height - 89,size: 11,color: fontColor,font: font});
-  page.drawText(datos.mes_pago || '', {x: 390,y: height - 105,size: 10,color: fontColor,font: font});
-  page.drawText(datos.numero_departamento || '', {x: 532,y: height - 133,size: 13,color: colorRed,font: font});
-  page.drawText('$', {x: 125,y: height - 165,size: 10,color: fontColor,font: font});
-  page.drawText(datos.cuota_ordinaria || '', {x: 254,y: height - 165,size: 10,color: fontColor,font: font});
-  page.drawText(datos.concepto_pago || '', {x: 125,y: height - 187,size: 10,color: fontColor,font: font});
-  page.drawText('$', {x: 125,y: height - 208,size: 10,color: fontColor,font: font});
-  page.drawText(datos.cuota_adeudos || '', {x: 254,y: height - 208,size: 10,color: fontColor,font: font});
-  page.drawText('$', {x: 125,y: height - 230,size: 10,color: fontColor,font: font});
-  page.drawText(datos.cuota_extraordinaria || '', {x: 254,y: height - 230,size: 10,color: fontColor,font: font});
-  page.drawText('$', {x: 125,y: height - 253,size: 10,color: fontColor,font: font});
-  page.drawText(datos.cuota_penalizacion || '', {x: 254,y: height - 253,size: 10,color: fontColor,font: font});
-  page.drawText('$', {x: 125,y: height - 275,size: 10,color: fontColor,font: font});
-  page.drawText(datos.cuota_reserva || '', {x: 254,y: height - 275,size: 10,color: fontColor,font: font});
-  page.drawText('$', {x: 127,y: height - 302,size: 10,color: fontColor,font: font});
-  page.drawText(datos.total_pagar || '', {x: 187,y: height - 302,size: 10,color: fontColor,font: font});
-  page.drawText(`SON: (${datos.total_pagar_letra})` || '', {x: width-textwidthTPL-70,y: height - 302,size: 9,color: fontColor,font: font});
-  page.drawText(datos.admin_condominio || '', {x: 16,y: height - 348,size: 10,color: fontColor,font: font});
-  page.drawText(datos.fecha || '', {x: 410,y: height - 331,size: 10,color: fontColor,font: font});
+  page.drawText(datos.nombre_completo_inquilino || "", {
+    x: 125,
+    y: height - 133,
+    size: 13,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.direccion_condominio || "", {
+    x: width - textwidthdir - 20,
+    y: height - 76,
+    size: 8,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.no_recibo || "", {
+    x: 532,
+    y: height - 63,
+    size: 13,
+    color: colorRed,
+    font: font,
+  });
+  page.drawText(`${datos.nombre_condominio} - ${datos.nombre_edificio}` || "", {
+    x: width - textwidthNC - 20,
+    y: height - 89,
+    size: 11,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.mes_pago || "", {
+    x: 390,
+    y: height - 105,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.numero_departamento || "", {
+    x: 532,
+    y: height - 133,
+    size: 13,
+    color: colorRed,
+    font: font,
+  });
+  page.drawText("$", {
+    x: 125,
+    y: height - 165,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.cuota_ordinaria || "", {
+    x: 254,
+    y: height - 165,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.concepto_pago || "", {
+    x: 125,
+    y: height - 187,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText("$", {
+    x: 125,
+    y: height - 208,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.cuota_adeudos || "", {
+    x: 254,
+    y: height - 208,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText("$", {
+    x: 125,
+    y: height - 230,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.cuota_extraordinaria || "", {
+    x: 254,
+    y: height - 230,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText("$", {
+    x: 125,
+    y: height - 253,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.cuota_penalizacion || "", {
+    x: 254,
+    y: height - 253,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText("$", {
+    x: 125,
+    y: height - 275,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.cuota_reserva || "", {
+    x: 254,
+    y: height - 275,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText("$", {
+    x: 127,
+    y: height - 302,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.total_pagar || "", {
+    x: 187,
+    y: height - 302,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(`SON: (${datos.total_pagar_letra})` || "", {
+    x: width - textwidthTPL - 70,
+    y: height - 302,
+    size: 9,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.admin_condominio || "", {
+    x: 16,
+    y: height - 348,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
+  page.drawText(datos.fecha || "", {
+    x: 410,
+    y: height - 331,
+    size: 10,
+    color: fontColor,
+    font: font,
+  });
 
   const pdfBytes = await pdfDoc.save();
   return pdfBytes;
 }
 
-async function crearPDFImagenMultiple(datosList){
-  const fontPath = path.join(__dirname, './Arial.ttf');
-  const imagePath = path.join(__dirname, './formato_recibo.PNG');
+async function crearPDFImagenMultiple(datosList) {
+  const fontPath = path.join(__dirname, "./Arial.ttf");
+  const imagePath = path.join(__dirname, "./formato_recibo.PNG");
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
   const font = await pdfDoc.embedFont(fs.readFileSync(fontPath));
@@ -112,76 +254,233 @@ async function crearPDFImagenMultiple(datosList){
   datosList.forEach((datos) => {
     const page = pdfDoc.addPage([width, height]);
     const scaleX = width / imagen.width;
-    const scaleY = (height/2) / imagen.height;
+    const scaleY = height / 2 / imagen.height;
     const scale = Math.min(scaleX, scaleY);
-    const textwidthdir = font.widthOfTextAtSize(datos.direccion_condominio || '', 8);
-    const textwidthNC = font.widthOfTextAtSize(`${datos.nombre_condominio} - ${datos.nombre_edificio}` || '', 11);
-    const textwidthTPL = font.widthOfTextAtSize(`SON: (${datos.total_pagar_letra})` || '', 9);
+    const textwidthdir = font.widthOfTextAtSize(
+      datos.direccion_condominio || "",
+      8
+    );
+    const textwidthNC = font.widthOfTextAtSize(
+      `${datos.nombre_condominio} - ${datos.nombre_edificio}` || "",
+      11
+    );
+    const textwidthTPL = font.widthOfTextAtSize(
+      `SON: (${datos.total_pagar_letra})` || "",
+      9
+    );
 
-    page.drawImage(imagen,{
-      x:0,
-      y:height/2,
-      width:imagen.width*scale,
-      height:imagen.height*scale,
+    page.drawImage(imagen, {
+      x: 0,
+      y: height / 2,
+      width: imagen.width * scale,
+      height: imagen.height * scale,
     });
 
-    page.drawText(datos.nombre_completo_inquilino || '', {x: 125,y: height - 133,size: 13,color: fontColor,font: font});
-    page.drawText(datos.direccion_condominio || '', {x: width-textwidthdir-20,y: height - 76,size: 8,color: fontColor,font: font});
-    page.drawText(datos.no_recibo || '', {x: 532,y: height - 63,size: 13,color: colorRed,font: font});
-    page.drawText(`${datos.nombre_condominio} - ${datos.nombre_edificio}` || '', {x: width-textwidthNC-20,y: height - 89,size: 11,color: fontColor,font: font});
-    page.drawText(datos.mes_pago || '', {x: 390,y: height - 105,size: 10,color: fontColor,font: font});
-    page.drawText(datos.numero_departamento || '', {x: 532,y: height - 133,size: 13,color: colorRed,font: font});
-    page.drawText('$', {x: 125,y: height - 165,size: 10,color: fontColor,font: font});
-    page.drawText(datos.cuota_ordinaria || '', {x: 254,y: height - 165,size: 10,color: fontColor,font: font});
-    page.drawText(datos.concepto_pago || '', {x: 125,y: height - 187,size: 10,color: fontColor,font: font});
-    page.drawText('$', {x: 125,y: height - 208,size: 10,color: fontColor,font: font});
-    page.drawText(datos.cuota_adeudos || '', {x: 254,y: height - 208,size: 10,color: fontColor,font: font});
-    page.drawText('$', {x: 125,y: height - 230,size: 10,color: fontColor,font: font});
-    page.drawText(datos.cuota_extraordinaria || '', {x: 254,y: height - 230,size: 10,color: fontColor,font: font});
-    page.drawText('$', {x: 125,y: height - 253,size: 10,color: fontColor,font: font});
-    page.drawText(datos.cuota_penalizacion || '', {x: 254,y: height - 253,size: 10,color: fontColor,font: font});
-    page.drawText('$', {x: 125,y: height - 275,size: 10,color: fontColor,font: font});
-    page.drawText(datos.cuota_reserva || '', {x: 254,y: height - 275,size: 10,color: fontColor,font: font});
-    page.drawText('$', {x: 127,y: height - 302,size: 10,color: fontColor,font: font});
-    page.drawText(datos.total_pagar || '', {x: 187,y: height - 302,size: 10,color: fontColor,font: font});
-    page.drawText(`SON: (${datos.total_pagar_letra})` || '', {x: width-textwidthTPL-70,y: height - 302,size: 9,color: fontColor,font: font});
-    page.drawText(datos.admin_condominio || '', {x: 16,y: height - 348,size: 10,color: fontColor,font: font});
-    page.drawText(datos.fecha || '', {x: 410,y: height - 331,size: 10,color: fontColor,font: font});
+    page.drawText(datos.nombre_completo_inquilino || "", {
+      x: 125,
+      y: height - 133,
+      size: 13,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.direccion_condominio || "", {
+      x: width - textwidthdir - 20,
+      y: height - 76,
+      size: 8,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.no_recibo || "", {
+      x: 532,
+      y: height - 63,
+      size: 13,
+      color: colorRed,
+      font: font,
+    });
+    page.drawText(
+      `${datos.nombre_condominio} - ${datos.nombre_edificio}` || "",
+      {
+        x: width - textwidthNC - 20,
+        y: height - 89,
+        size: 11,
+        color: fontColor,
+        font: font,
+      }
+    );
+    page.drawText(datos.mes_pago || "", {
+      x: 390,
+      y: height - 105,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.numero_departamento || "", {
+      x: 532,
+      y: height - 133,
+      size: 13,
+      color: colorRed,
+      font: font,
+    });
+    page.drawText("$", {
+      x: 125,
+      y: height - 165,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.cuota_ordinaria || "", {
+      x: 254,
+      y: height - 165,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.concepto_pago || "", {
+      x: 125,
+      y: height - 187,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText("$", {
+      x: 125,
+      y: height - 208,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.cuota_adeudos || "", {
+      x: 254,
+      y: height - 208,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText("$", {
+      x: 125,
+      y: height - 230,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.cuota_extraordinaria || "", {
+      x: 254,
+      y: height - 230,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText("$", {
+      x: 125,
+      y: height - 253,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.cuota_penalizacion || "", {
+      x: 254,
+      y: height - 253,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText("$", {
+      x: 125,
+      y: height - 275,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.cuota_reserva || "", {
+      x: 254,
+      y: height - 275,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText("$", {
+      x: 127,
+      y: height - 302,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.total_pagar || "", {
+      x: 187,
+      y: height - 302,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(`SON: (${datos.total_pagar_letra})` || "", {
+      x: width - textwidthTPL - 70,
+      y: height - 302,
+      size: 9,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.admin_condominio || "", {
+      x: 16,
+      y: height - 348,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
+    page.drawText(datos.fecha || "", {
+      x: 410,
+      y: height - 331,
+      size: 10,
+      color: fontColor,
+      font: font,
+    });
   });
 
   const pdfBytes = await pdfDoc.save();
   return pdfBytes;
 }
 
-
 // Endpoint para manejar solicitudes POST
 //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-app.post('/api/registrarCuenta', (req, res) => {
+app.post("/api/registrarCuenta", (req, res) => {
   console.log(req.body);
-  const { nombre_administrador, apellido_paterno_administrador, apellido_materno_administrador, correo_administrador, contraseña_administrador } = req.body;
+  const {
+    nombre_administrador,
+    apellido_paterno_administrador,
+    apellido_materno_administrador,
+    correo_administrador,
+    contraseña_administrador,
+  } = req.body;
 
   // Primero, verifica si el correo ya está registrado
   connection.query(
-    'SELECT correo_administrador FROM administrador WHERE correo_administrador = ?',
+    "SELECT correo_administrador FROM administrador WHERE correo_administrador = ?",
     [correo_administrador],
     async (error, results) => {
       if (error) {
         console.error(error);
-        return res.status(500).send('Error al verificar el correo electrónico');
+        return res.status(500).send("Error al verificar el correo electrónico");
       }
 
       if (results.length > 0) {
-        return res.status(400).send('Ya existe una cuenta con el correo electrónico registrado');
+        return res
+          .status(400)
+          .send("Ya existe una cuenta con el correo electrónico registrado");
       }
       const hasheo = await bcrypt.hash(contraseña_administrador, saltRounds);
 
       const sql = `INSERT INTO administrador (nombre_administrador, apellido_paterno_administrador, apellido_materno_administrador, correo_administrador, contraseña_administrador) VALUES (?, ?, ?, ?, ?)`;
-      const values = [nombre_administrador, apellido_paterno_administrador, apellido_materno_administrador, correo_administrador, hasheo];
+      const values = [
+        nombre_administrador,
+        apellido_paterno_administrador,
+        apellido_materno_administrador,
+        correo_administrador,
+        hasheo,
+      ];
 
-      connection.query(sql, values, error => {
+      connection.query(sql, values, (error) => {
         if (error) {
           console.log(error);
-          return res.status(500).send('Error al registrar la cuenta');
+          return res.status(500).send("Error al registrar la cuenta");
         }
         res.send("Cuenta registrada exitosamente");
       });
@@ -189,61 +488,84 @@ app.post('/api/registrarCuenta', (req, res) => {
   );
 });
 
-
-app.post('/api/registrarDepartamento', (req, res) => {
-  connection.connect(error => {
+app.post("/api/registrarDepartamento", (req, res) => {
+  connection.connect((error) => {
     if (error) throw error;
-    console.log('Conexión a la base de datos MySQL establecida');
-  });  
-  console.log("-------------------------------")
+    console.log("Conexión a la base de datos MySQL establecida");
+  });
+  console.log("-------------------------------");
   console.log(req.body);
   const { id_edificio, numero_departamento } = req.body;
   const sql = `INSERT INTO departamento (id_edificio, numero_departamento) VALUES (?, ?)`;
   const values = [id_edificio, numero_departamento];
-  connection.query(sql, values, error => {
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/registrarCondominio', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/registrarCondominio", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { nombre_condominio, direccion_condominio , admin_condominio,id_administrador} = req.body;
+  const {
+    nombre_condominio,
+    direccion_condominio,
+    admin_condominio,
+    id_administrador,
+  } = req.body;
   const sql = `INSERT INTO condominio (nombre_condominio, direccion_condominio, admin_condominio,id_administrador) VALUES (?, ?, ?, ?)`;
-  const values = [nombre_condominio, direccion_condominio, admin_condominio,id_administrador];
-  connection.query(sql, values, error => {
+  const values = [
+    nombre_condominio,
+    direccion_condominio,
+    admin_condominio,
+    id_administrador,
+  ];
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/registrarEdificio', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/registrarEdificio", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
   const { id_condominio, nombre_edificio } = req.body;
   const sql = `INSERT INTO edificio (id_condominio, nombre_edificio) VALUES (?, ?)`;
   const values = [id_condominio, nombre_edificio];
-  connection.query(sql, values, error => {
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/registrarInquilino', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/registrarInquilino", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { id_departamento, nombre_inquilino, apellino_paterno_inquilino, apellino_materno_inquilino, correo_inquilino, codigo_inquilino } = req.body;
+  const {
+    id_departamento,
+    nombre_inquilino,
+    apellino_paterno_inquilino,
+    apellino_materno_inquilino,
+    correo_inquilino,
+    codigo_inquilino,
+  } = req.body;
   const sql = `INSERT INTO inquilino (id_departamento, nombre_inquilino, apellino_paterno_inquilino, apellino_materno_inquilino, correo_inquilino, codigo_inquilino) VALUES (?, ?, ?, ?, ?, ?)`;
-  const values = [id_departamento, nombre_inquilino, apellino_paterno_inquilino, apellino_materno_inquilino, correo_inquilino, codigo_inquilino];
-  connection.query(sql, values, error => {
+  const values = [
+    id_departamento,
+    nombre_inquilino,
+    apellino_paterno_inquilino,
+    apellino_materno_inquilino,
+    correo_inquilino,
+    codigo_inquilino,
+  ];
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/registrarRecibo', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/registrarRecibo", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
   const recibos = Array.isArray(req.body) ? req.body : [req.body];
   /*const nombre_completo_inquilinoAES = CryptoJS.AES.encrypt(nombre_completo_inquilino, secretKeyAES).toString();
@@ -253,35 +575,58 @@ app.post('/api/registrarRecibo', (req, res) => {
   const cuota_reservaAES = CryptoJS.AES.encrypt(cuota_reserva, secretKeyAES).toString();
   const cuota_adeudosAES = CryptoJS.AES.encrypt(cuota_adeudos, secretKeyAES).toString();*/
   const sql = `INSERT INTO reciboCompleto (id_condominio, id_edificio, id_departamento, id_inquilino, nombre_completo_inquilino, no_recibo, fecha, fecha_formateada, mes_pago, concepto_pago, cuota_ordinaria, cuota_penalizacion, cuota_extraordinaria, cuota_reserva, cuota_adeudos, total_pagar, total_pagar_letra, id_administrador) VALUES ?`;
-  const values = recibos.map(recibo => [
-    recibo.id_condominio, recibo.id_edificio, recibo.id_departamento, recibo.id_inquilino, recibo.nombre_completo_inquilino, recibo.no_recibo, recibo.fecha, recibo.fecha_formateada, recibo.mes_pago, recibo.concepto_pago, recibo.cuota_ordinaria, recibo.cuota_penalizacion, recibo.cuota_extraordinaria, recibo.cuota_reserva, recibo.cuota_adeudos, recibo.total_pagar, recibo.total_pagar_letra, recibo.id_administrador
+  const values = recibos.map((recibo) => [
+    recibo.id_condominio,
+    recibo.id_edificio,
+    recibo.id_departamento,
+    recibo.id_inquilino,
+    recibo.nombre_completo_inquilino,
+    recibo.no_recibo,
+    recibo.fecha,
+    recibo.fecha_formateada,
+    recibo.mes_pago,
+    recibo.concepto_pago,
+    recibo.cuota_ordinaria,
+    recibo.cuota_penalizacion,
+    recibo.cuota_extraordinaria,
+    recibo.cuota_reserva,
+    recibo.cuota_adeudos,
+    recibo.total_pagar,
+    recibo.total_pagar_letra,
+    recibo.id_administrador,
   ]);
-  connection.query(sql, [values], error => {
+  connection.query(sql, [values], (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-
-app.post('/api/registrarInfoPagosCompleto', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/registrarInfoPagosCompleto", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
   const pagos = Array.isArray(req.body) ? req.body : [req.body];
   const query = `INSERT INTO infopagos (id_administrador, id_condominio, id_edificio, id_inquilino, no_recibo, total_pagado, adeudo, fecha_pago) VALUES ?`;
-  const values = pagos.map(pago => [
-    pago.id_administrador, pago.id_condominio, pago.id_edificio, pago.id_inquilino, pago.no_recibo,pago.total_pagado, pago.adeudo, pago.fecha_pago
+  const values = pagos.map((pago) => [
+    pago.id_administrador,
+    pago.id_condominio,
+    pago.id_edificio,
+    pago.id_inquilino,
+    pago.no_recibo,
+    pago.total_pagado,
+    pago.adeudo,
+    pago.fecha_pago,
   ]);
-  connection.query(query, [values], error => {
+  connection.query(query, [values], (error) => {
     if (error) console.log(error);
     res.send("200");
-  })
+  });
 });
 
-app.post('/api/enviarRecibosCorreoElectronico', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/enviarRecibosCorreoElectronico", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
   const lista = req.body;
-  
+
   for (let i = 0; i < lista.length; i++) {
     const elemento = lista[i];
     const query = `
@@ -315,13 +660,12 @@ app.post('/api/enviarRecibosCorreoElectronico', (req, res) => {
       WHERE
         rc.id_recibo = ?
     `;
-    connection.query(query,[elemento], (error, results) => {
+    connection.query(query, [elemento], (error, results) => {
       if (error) {
         console.error(error);
-        res.status(500).send('Error al enviar los correos');
+        res.status(500).send("Error al enviar los correos");
       } else {
-
-       const datos = {
+        const datos = {
           id_recibo: results[0].id_recibo,
           id_condominio: results[0].id_condominio,
           id_departamento: results[0].id_departamento,
@@ -348,65 +692,65 @@ app.post('/api/enviarRecibosCorreoElectronico', (req, res) => {
           direccion_condominio: results[0].direccion_condominio,
           admin_condominio: results[0].admin_condominio,
           nombre_edificio: results[0].nombre_edificio,
-          numero_departamento: results[0].numero_departamento
-
+          numero_departamento: results[0].numero_departamento,
         };
         console.log(datos);
 
         crearPDFImagen(datos)
-        .then((pdfBytes) => {
-          // Aquí puedes hacer lo que desees con los bytes del PDF, como guardarlo en un archivo o enviarlo al cliente
-          console.log('PDF creado exitosamente');
-          connection.query('SELECT * FROM inquilino WHERE id_inquilino = ?',[datos.id_inquilino], (error, results) => {
-            if (error) {
-              console.error(error);
-              res.status(500).send('Error al enviar los correos');
-            } else {
-              //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-              const coreo_destinatario = results[0].correo_inquilino;
-              const transporter = nodemailer.createTransport({
-                service: 'Gmail',
-                auth: {
-                  user: 'bureau.manager.project@gmail.com',
-                  pass: 'aavrdsdbfhxyclyk',
-                },
-              });
-
-              const mailOptions = {
-                from: 'bureau.manager.project@gmail.com',
-                to: coreo_destinatario,
-                subject: 'Adjunto PDF Recibo',
-                text: 'Recibo',
-                attachments: [
-                  {
-                    filename: 'recibo.pdf',
-                    content: pdfBytes,
-                  },
-                ],
-              };
-
-              transporter.sendMail(mailOptions, (error, info) => {
+          .then((pdfBytes) => {
+            // Aquí puedes hacer lo que desees con los bytes del PDF, como guardarlo en un archivo o enviarlo al cliente
+            console.log("PDF creado exitosamente");
+            connection.query(
+              "SELECT * FROM inquilino WHERE id_inquilino = ?",
+              [datos.id_inquilino],
+              (error, results) => {
                 if (error) {
-                  console.error('Error al enviar el correo:', error);
+                  console.error(error);
+                  res.status(500).send("Error al enviar los correos");
                 } else {
-                  console.log('Correo enviado:', info.response);
+                  //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                  const coreo_destinatario = results[0].correo_inquilino;
+                  const transporter = nodemailer.createTransport({
+                    service: "Gmail",
+                    auth: {
+                      user: "bureau.manager.project@gmail.com",
+                      pass: "aavrdsdbfhxyclyk",
+                    },
+                  });
+
+                  const mailOptions = {
+                    from: "bureau.manager.project@gmail.com",
+                    to: coreo_destinatario,
+                    subject: "Adjunto PDF Recibo",
+                    text: "Recibo",
+                    attachments: [
+                      {
+                        filename: "recibo.pdf",
+                        content: pdfBytes,
+                      },
+                    ],
+                  };
+
+                  transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                      console.error("Error al enviar el correo:", error);
+                    } else {
+                      console.log("Correo enviado:", info.response);
+                    }
+                  });
                 }
-              });
-
-
-            }
+              }
+            );
+          })
+          .catch((error) => {
+            console.error("Error al crear el PDF:", error);
           });
-        })
-        .catch((error) => {
-          console.error('Error al crear el PDF:', error);
-        });
-        
       }
     });
   }
 });
 
-app.post('/api/generarPDFMasivo', async (req, res) => {
+app.post("/api/generarPDFMasivo", async (req, res) => {
   try {
     console.log(req.body);
     const lista = req.body;
@@ -443,7 +787,7 @@ app.post('/api/generarPDFMasivo', async (req, res) => {
         rc.id_recibo = ?
     `;
     // Crear una matriz de promesas para las consultas a la base de datos
-    const promises = lista.map(elemento => {
+    const promises = lista.map((elemento) => {
       return new Promise((resolve, reject) => {
         connection.query(query, [elemento], (error, results) => {
           if (error) {
@@ -478,7 +822,7 @@ app.post('/api/generarPDFMasivo', async (req, res) => {
               direccion_condominio: results[0].direccion_condominio,
               admin_condominio: results[0].admin_condominio,
               nombre_edificio: results[0].nombre_edificio,
-              numero_departamento: results[0].numero_departamento
+              numero_departamento: results[0].numero_departamento,
             };
             superDatos.push(datos);
             resolve();
@@ -493,71 +837,91 @@ app.post('/api/generarPDFMasivo', async (req, res) => {
     const pdfBytes = await crearPDFImagenMultiple(superDatos);
 
     // Guardar el archivo PDF en el servidor
-    const filePath = './archivo.pdf';
+    const filePath = "./archivo.pdf";
     fs.writeFileSync(filePath, pdfBytes);
 
     // Enviar el archivo PDF al cliente
-    res.download(filePath, 'archivo.pdf', (error) => {
+    res.download(filePath, "archivo.pdf", (error) => {
       if (error) {
-        console.error('Error al enviar el archivo:', error);
-        res.status(500).send('Error al enviar el archivo PDF');
+        console.error("Error al enviar el archivo:", error);
+        res.status(500).send("Error al enviar el archivo PDF");
       }
 
       // Eliminar el archivo del servidor después de enviarlo
     });
-  } 
-  catch (error) {
-    console.error('Error al crear el PDF:', error);
-    res.status(500).send('Error al crear el PDF');
+  } catch (error) {
+    console.error("Error al crear el PDF:", error);
+    res.status(500).send("Error al crear el PDF");
   }
 });
 
-
 //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
-app.post('/api/actualizarCondominio', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/actualizarCondominio", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { id_condominio, nombre_condominio, direccion_condominio , admin_condominio} = req.body;
+  const {
+    id_condominio,
+    nombre_condominio,
+    direccion_condominio,
+    admin_condominio,
+  } = req.body;
   const sql = `UPDATE condominio SET nombre_condominio = ?, direccion_condominio = ? ,admin_condominio = ? WHERE id_condominio= ?`;
-  const values = [nombre_condominio, direccion_condominio, admin_condominio,id_condominio];
-  connection.query(sql, values, error => {
+  const values = [
+    nombre_condominio,
+    direccion_condominio,
+    admin_condominio,
+    id_condominio,
+  ];
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/actualizarEdificio', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/actualizarEdificio", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { id_edificio, nombre_edificio} = req.body;
+  const { id_edificio, nombre_edificio } = req.body;
   const sql = `UPDATE edificio SET nombre_edificio = ? WHERE id_edificio= ?`;
-  const values = [nombre_edificio,id_edificio];
-  connection.query(sql, values, error => {
+  const values = [nombre_edificio, id_edificio];
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/actualizarDepartamento', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/actualizarDepartamento", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { id_departamento, nombre_departamento} = req.body;
+  const { id_departamento, nombre_departamento } = req.body;
   const sql = `UPDATE departamento SET numero_departamento = ? WHERE id_departamento= ?`;
-  const values = [nombre_departamento,id_departamento];
-  connection.query(sql, values, error => {
+  const values = [nombre_departamento, id_departamento];
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
 });
 
-app.post('/api/actualizarInquilino', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/actualizarInquilino", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { id_inquilino, nombre_inquilino, apellino_paterno_inquilino, apellino_materno_inquilino, correo_inquilino} = req.body;
+  const {
+    id_inquilino,
+    nombre_inquilino,
+    apellino_paterno_inquilino,
+    apellino_materno_inquilino,
+    correo_inquilino,
+  } = req.body;
   const sql = `UPDATE inquilino SET nombre_inquilino = ?, apellino_paterno_inquilino = ? , apellino_materno_inquilino = ? , correo_inquilino = ? WHERE id_inquilino= ?`;
-  const values = [nombre_inquilino, apellino_paterno_inquilino, apellino_materno_inquilino, correo_inquilino, id_inquilino];
-  connection.query(sql, values, error => {
+  const values = [
+    nombre_inquilino,
+    apellino_paterno_inquilino,
+    apellino_materno_inquilino,
+    correo_inquilino,
+    id_inquilino,
+  ];
+  connection.query(sql, values, (error) => {
     if (error) console.log(error);
     res.send("200");
   });
@@ -565,65 +929,67 @@ app.post('/api/actualizarInquilino', (req, res) => {
 
 //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
-
-
-app.post('/api/getAdmin', (req, res) => {
+app.post("/api/getAdmin", (req, res) => {
   console.log(req.body);
   const { correo_administrador, contraseña_administrador } = req.body;
   connection.query(
-    'SELECT * FROM administrador WHERE correo_administrador = ?',
+    "SELECT * FROM administrador WHERE correo_administrador = ?",
     [correo_administrador],
     (error, results) => {
       if (error) {
         console.error(error);
-        res.status(500).send('Error al obtener los registros');
+        res.status(500).send("Error al obtener los registros");
       } else if (results.length === 1) {
-       
         const user = results[0];
-        bcrypt.compare(contraseña_administrador, user.contraseña_administrador, (error, isMatch) => {
-          if (error) {
-            console.error(error);
-            res.status(500).send('Error al verificar la contraseña');
-          } else if (isMatch) {
-            
-            const token = jwt.sign({ correo_administrador }, secretKey, { expiresIn: '5m' });
-            res.json({ token, id_administrador: user.id_administrador });
-            ///res.json({ id_administrador: user.id_administrador });
-          } else {
-            // Las contraseñas no coinciden
-            res.status(401).send('Correo o contraseña incorrectos');
+        bcrypt.compare(
+          contraseña_administrador,
+          user.contraseña_administrador,
+          (error, isMatch) => {
+            if (error) {
+              console.error(error);
+              res.status(500).send("Error al verificar la contraseña");
+            } else if (isMatch) {
+              const token = jwt.sign({ correo_administrador }, secretKey, {
+                expiresIn: "5m",
+              });
+              res.json({ token, id_administrador: user.id_administrador });
+              ///res.json({ id_administrador: user.id_administrador });
+            } else {
+              // Las contraseñas no coinciden
+              res.status(401).send("Correo o contraseña incorrectos");
+            }
           }
-        });
+        );
       } else {
         // Usuario no encontrado
-        res.status(404).send('Usuario no encontrado');
+        res.status(404).send("Usuario no encontrado");
       }
     }
   );
 });
 
-app.get('/api/getAdmin/:id_administrador', (req, res) => {
+app.get("/api/getAdmin/:id_administrador", (req, res) => {
   const { id_administrador } = req.params;
 
   connection.query(
-      'SELECT * FROM administrador WHERE id_administrador = ?',
-      [id_administrador],
-      (error, results) => {
-          if (error) {
-              console.error(error);
-              return res.status(500).send('Error al obtener los registros');
-          } else if (results.length > 0) {
-              const adminData = results[0];
-              res.json(adminData);
-          } else {
-              res.status(404).send('Administrador no encontrado');
-          }
+    "SELECT * FROM administrador WHERE id_administrador = ?",
+    [id_administrador],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send("Error al obtener los registros");
+      } else if (results.length > 0) {
+        const adminData = results[0];
+        res.json(adminData);
+      } else {
+        res.status(404).send("Administrador no encontrado");
       }
+    }
   );
 });
 
-app.get('/api/getRecibos/:id_administrador', (req, res) => {
-  const id_administrador  = parseInt(req.params.id_administrador);
+app.get("/api/getRecibos/:id_administrador", (req, res) => {
+  const id_administrador = parseInt(req.params.id_administrador);
   const sql = `
     SELECT r.*, i.correo_inquilino, 
            i.correo_inquilino IS NOT NULL AS tiene_correo
@@ -634,7 +1000,7 @@ app.get('/api/getRecibos/:id_administrador', (req, res) => {
   connection.query(sql, [id_administrador], (error, results) => {
     if (error) {
       console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
+      res.status(500).send("Error al obtener los registros de la tabla");
     } else {
       const recibosDesencriptados = results.map((recibo) => {
         return {
@@ -651,77 +1017,96 @@ app.get('/api/getRecibos/:id_administrador', (req, res) => {
           cuota_reserva: recibo.cuota_reserva,
           //cuota_adeudos: CryptoJS.AES.decrypt(recibo.cuota_adeudos, secretKey).toString(CryptoJS.enc.Utf8),
           cuota_adeudos: recibo.cuota_adeudos,
-          tiene_correo: recibo.tiene_correo === 1
+          tiene_correo: recibo.tiene_correo === 1,
         };
-      });  
+      });
 
       res.json(recibosDesencriptados);
     }
   });
 });
 
-app.get('/api/getCondominios/:id_administrador', (req, res) => {
+app.get("/api/getCondominios/:id_administrador", (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
-  connection.query('SELECT * FROM condominio WHERE id_administrador = ?', [id_administrador], (error, results) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
-    } else {
-      if (results.length > 0) {
-        res.json(results);
+  connection.query(
+    "SELECT * FROM condominio WHERE id_administrador = ?",
+    [id_administrador],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Error al obtener los registros de la tabla");
       } else {
-        res.status(404).send('No se encontraron condominios para el administrador especificado');
+        if (results.length > 0) {
+          res.json(results);
+        } else {
+          res
+            .status(404)
+            .send(
+              "No se encontraron condominios para el administrador especificado"
+            );
+        }
       }
     }
-  });
+  );
 });
 
-
-app.post('/api/getEdificiosbyCondominio', (req, res) => {
+app.post("/api/getEdificiosbyCondominio", (req, res) => {
   console.log(req.body);
   const { id_condominio } = req.body;
-  connection.query('SELECT * FROM edificio WHERE id_condominio = ?',[id_condominio], (error, results) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
-    } else {
-      res.json(results);
-      console.log(results);
+  connection.query(
+    "SELECT * FROM edificio WHERE id_condominio = ?",
+    [id_condominio],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Error al obtener los registros de la tabla");
+      } else {
+        res.json(results);
+        console.log(results);
+      }
     }
-  });
+  );
 });
 
-app.post('/api/getDepartamentosbyEdificios', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/getDepartamentosbyEdificios", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
   const { id_edificio } = req.body;
-  connection.query('SELECT * FROM departamento WHERE id_edificio = ?',[id_edificio], (error, results) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
-    } else {
-      res.json(results);
-      console.log(results);
+  connection.query(
+    "SELECT * FROM departamento WHERE id_edificio = ?",
+    [id_edificio],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Error al obtener los registros de la tabla");
+      } else {
+        res.json(results);
+        console.log(results);
+      }
     }
-  });
+  );
 });
 
-app.post('/api/getInquilinosbyDepartamento', (req, res) => {
-  console.log("-------------------------------")
+app.post("/api/getInquilinosbyDepartamento", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
   const { id_departamento } = req.body;
-  connection.query('SELECT * FROM inquilino WHERE id_departamento = ?',[id_departamento], (error, results) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
-    } else {
-      res.json(results);
-      console.log(results);
+  connection.query(
+    "SELECT * FROM inquilino WHERE id_departamento = ?",
+    [id_departamento],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Error al obtener los registros de la tabla");
+      } else {
+        res.json(results);
+        console.log(results);
+      }
     }
-  });
+  );
 });
 
-app.get('/api/getInquilinosByCondominio', (req, res) => {
+app.get("/api/getInquilinosByCondominio", (req, res) => {
   const { id_condominio } = req.query;
   const query = `
     SELECT i.nombre_inquilino, i.apellino_paterno_inquilino, i.apellino_materno_inquilino, 
@@ -734,20 +1119,19 @@ app.get('/api/getInquilinosByCondominio', (req, res) => {
   connection.query(query, [id_condominio], (error, results) => {
     if (error) {
       console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
+      res.status(500).send("Error al obtener los registros de la tabla");
     } else {
       res.json(results);
     }
   });
 });
 
-
-app.get('/api/getEdificios', (req, res) => {
-  console.log("-------------------------------")
-  connection.query('SELECT * FROM edificio', (error, results) => {
+app.get("/api/getEdificios", (req, res) => {
+  console.log("-------------------------------");
+  connection.query("SELECT * FROM edificio", (error, results) => {
     if (error) {
       console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
+      res.status(500).send("Error al obtener los registros de la tabla");
     } else {
       res.json(results);
       console.log(results);
@@ -755,26 +1139,26 @@ app.get('/api/getEdificios', (req, res) => {
   });
 });
 
-app.get('/api/getInfoCondominio', (req, res) => {
-  console.log("-------------------------------")
+app.get("/api/getInfoCondominio", (req, res) => {
+  console.log("-------------------------------");
   console.log(req.body);
-  const { id_condominio} = req.body;
+  const { id_condominio } = req.body;
   connection.query(
-    'SELECT * FROM condominio WHERE id_condominio = ?',
+    "SELECT * FROM condominio WHERE id_condominio = ?",
     [id_condominio],
     (error, results) => {
       if (error) {
         console.error(error);
-        res.status(500).send('Error al obtener los registros');
+        res.status(500).send("Error al obtener los registros");
       } else {
         console.log(results.body);
-        res.status(2)
+        res.status(2);
       }
     }
   );
 });
 
-app.get('/api/getInfoPagos/:id_administrador', (req, res) => {
+app.get("/api/getInfoPagos/:id_administrador", (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
   const sql = `
     SELECT
@@ -793,14 +1177,14 @@ app.get('/api/getInfoPagos/:id_administrador', (req, res) => {
   connection.query(sql, [id_administrador], (error, results) => {
     if (error) {
       console.error(error);
-      res.status(500).send('Error al obtener los registros de la tabla');
+      res.status(500).send("Error al obtener los registros de la tabla");
     } else {
       res.json(results);
     }
   });
 });
 
-app.get('/api/getRecibosFiltrados/:id_administrador', (req, res) => {
+app.get("/api/getRecibosFiltrados/:id_administrador", (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
   const { condominio, edificio, departamento, mes, anio } = req.query;
 
@@ -813,26 +1197,26 @@ app.get('/api/getRecibosFiltrados/:id_administrador', (req, res) => {
   let values = [id_administrador];
 
   if (condominio) {
-    sql += ' AND r.id_condominio = ?';
+    sql += " AND r.id_condominio = ?";
     values.push(condominio);
   }
   if (edificio) {
-    sql += ' AND r.id_edificio = ?';
+    sql += " AND r.id_edificio = ?";
     values.push(edificio);
   }
   if (departamento) {
-    sql += ' AND r.id_departamento = ?';
+    sql += " AND r.id_departamento = ?";
     values.push(departamento);
   }
   if (mes && anio) {
-    sql += ' AND MONTH(r.fecha) = ? AND YEAR(r.fecha) = ?';
+    sql += " AND MONTH(r.fecha) = ? AND YEAR(r.fecha) = ?";
     values.push(mes, anio);
   }
 
   connection.query(sql, values, (error, results) => {
     if (error) {
       console.error(error);
-      res.status(500).send('Error al obtener los registros filtrados');
+      res.status(500).send("Error al obtener los registros filtrados");
     } else {
       const recibosDesencriptados = results.map((recibo) => {
         return {
@@ -849,7 +1233,7 @@ app.get('/api/getRecibosFiltrados/:id_administrador', (req, res) => {
           cuota_reserva: recibo.cuota_reserva,
           //cuota_adeudos: CryptoJS.AES.decrypt(recibo.cuota_adeudos, secretKey).toString(CryptoJS.enc.Utf8),
           cuota_adeudos: recibo.cuota_adeudos,
-          tiene_correo: recibo.tiene_correo === 1
+          tiene_correo: recibo.tiene_correo === 1,
         };
       });
       res.json(recibosDesencriptados);
@@ -857,7 +1241,7 @@ app.get('/api/getRecibosFiltrados/:id_administrador', (req, res) => {
   });
 });
 
-app.get('/api/getInfoPagosFiltrados/:id_administrador', (req, res) => {
+app.get("/api/getInfoPagosFiltrados/:id_administrador", (req, res) => {
   const { condominio, edificio, anio, mes } = req.query;
   let query = `
     SELECT
@@ -875,30 +1259,29 @@ app.get('/api/getInfoPagosFiltrados/:id_administrador', (req, res) => {
   let params = [req.params.id_administrador];
 
   if (condominio) {
-      query += " AND c.id_condominio = ?";
-      params.push(condominio);
+    query += " AND c.id_condominio = ?";
+    params.push(condominio);
   }
   if (edificio) {
-      query += " AND p.id_edificio = ?";
-      params.push(edificio);
+    query += " AND p.id_edificio = ?";
+    params.push(edificio);
   }
   if (anio && mes) {
-      query += " AND YEAR(p.fecha_pago) = ? AND MONTH(p.fecha_pago) = ?";
-      params.push(anio, mes);
+    query += " AND YEAR(p.fecha_pago) = ? AND MONTH(p.fecha_pago) = ?";
+    params.push(anio, mes);
   }
 
   connection.query(query, params, (error, results) => {
-      if (error) {
-          console.error('Error al obtener datos filtrados:', error);
-          res.status(500).send('Error al obtener datos filtrados');
-      } else {
-          res.json(results);
-      }
+    if (error) {
+      console.error("Error al obtener datos filtrados:", error);
+      res.status(500).send("Error al obtener datos filtrados");
+    } else {
+      res.json(results);
+    }
   });
 });
 
-
-app.get('/api/verificarRecibo/:id_condominio/:no_recibo', (req, res) => {
+app.get("/api/verificarRecibo/:id_condominio/:no_recibo", (req, res) => {
   const { id_condominio, no_recibo } = req.params;
   const sql = `
     SELECT COUNT(*) AS count
@@ -908,54 +1291,53 @@ app.get('/api/verificarRecibo/:id_condominio/:no_recibo', (req, res) => {
   connection.query(sql, [id_condominio, no_recibo], (error, results) => {
     if (error) {
       console.error(error);
-      res.status(500).send('Error al verificar el recibo');
+      res.status(500).send("Error al verificar el recibo");
     } else {
       res.json({ existe: results[0].count > 0 });
     }
   });
 });
 
-app.get('/api/verificarCodigoInquilino/:codigo_inquilino', (req, res) => {
+app.get("/api/verificarCodigoInquilino/:codigo_inquilino", (req, res) => {
   const { codigo_inquilino } = req.params;
   const sql = `
     SELECT COUNT(*) AS count FROM inquilino WHERE codigo_inquilino = ?
   `;
   connection.query(sql, [codigo_inquilino], (error, results) => {
-    if (error){
+    if (error) {
       console.error(error);
-      res.status(500).send('Error al verificar el código del inquilino');
+      res.status(500).send("Error al verificar el código del inquilino");
     } else {
       res.json({ existe: results[0].count > 0 });
     }
   });
 });
 
-app.get('/api/obtenerUltimoNumeroRecibo/:id_condominio', async (req, res) => {
+app.get("/api/obtenerUltimoNumeroRecibo/:id_condominio", async (req, res) => {
   try {
     const id_condominio = req.params.id_condominio;
     const query = `SELECT MAX(no_recibo) AS ultimoNumeroRecibo FROM recibocompleto WHERE id_condominio = ?`;
     connection.query(query, [id_condominio], (error, results) => {
       if (error) {
         console.error(error);
-        res.status(500).send('Error al obtener el último número de recibo');
+        res.status(500).send("Error al obtener el último número de recibo");
       } else {
         res.json(results[0]);
       }
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error en el servidor');
+    res.status(500).send("Error en el servidor");
   }
 });
 
-
-app.post('/api/eliminarRecibos', (req, res) => {
+app.post("/api/eliminarRecibos", (req, res) => {
   const { ids } = req.body;
   if (ids.length === 0) {
-      return res.status(400).send('No se proporcionaron IDs de recibos.');
+    return res.status(400).send("No se proporcionaron IDs de recibos.");
   }
 
-  const placeholders = ids.map(() => '?').join(',');
+  const placeholders = ids.map(() => "?").join(",");
   const selectSql = `
     SELECT no_recibo, id_condominio 
     FROM recibocompleto 
@@ -964,66 +1346,72 @@ app.post('/api/eliminarRecibos', (req, res) => {
 
   connection.beginTransaction((err) => {
     if (err) {
-      return res.status(500).send('Error al iniciar transacción');
+      return res.status(500).send("Error al iniciar transacción");
     }
 
     connection.query(selectSql, ids, (error, results) => {
-        if (error) {
-            return connection.rollback(() => {
-                console.error('Error al recuperar recibos:', error);
-                res.status(500).send('Error al recuperar recibos');
-            });
-        }
+      if (error) {
+        return connection.rollback(() => {
+          console.error("Error al recuperar recibos:", error);
+          res.status(500).send("Error al recuperar recibos");
+        });
+      }
 
-        // Preparamos los datos para eliminar en infopagos
-        const infopagosDeletes = results.map(row => [row.no_recibo, row.id_condominio]);
-        if (infopagosDeletes.length > 0) {
-            const deleteInfopagosSql = `
+      // Preparamos los datos para eliminar en infopagos
+      const infopagosDeletes = results.map((row) => [
+        row.no_recibo,
+        row.id_condominio,
+      ]);
+      if (infopagosDeletes.length > 0) {
+        const deleteInfopagosSql = `
                 DELETE FROM infopagos 
                 WHERE (no_recibo, id_condominio) IN (?)
             `;
-            connection.query(deleteInfopagosSql, [infopagosDeletes], (error) => {
-                if (error) {
-                    return connection.rollback(() => {
-                        console.error('Error al eliminar en infopagos:', error);
-                        res.status(500).send('Error al eliminar en infopagos');
-                    });
-                }
+        connection.query(deleteInfopagosSql, [infopagosDeletes], (error) => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error("Error al eliminar en infopagos:", error);
+              res.status(500).send("Error al eliminar en infopagos");
+            });
+          }
 
-                // Eliminación en recibocompleto
-                const deleteReciboCompletoSql = `DELETE FROM recibocompleto WHERE id_recibo IN (${placeholders})`;
-                connection.query(deleteReciboCompletoSql, ids, (error) => {
-                    if (error) {
-                        return connection.rollback(() => {
-                            console.error('Error al eliminar recibos completos:', error);
-                            res.status(500).send('Error al eliminar recibos completos');
-                        });
-                    }
+          // Eliminación en recibocompleto
+          const deleteReciboCompletoSql = `DELETE FROM recibocompleto WHERE id_recibo IN (${placeholders})`;
+          connection.query(deleteReciboCompletoSql, ids, (error) => {
+            if (error) {
+              return connection.rollback(() => {
+                console.error("Error al eliminar recibos completos:", error);
+                res.status(500).send("Error al eliminar recibos completos");
+              });
+            }
 
-                    // Si todo fue bien, hacemos commit
-                    connection.commit((err) => {
-                        if (err) {
-                            return connection.rollback(() => {
-                                console.error('Error al hacer commit de la transacción:', err);
-                                res.status(500).send('Error al finalizar la transacción');
-                            });
-                        }
-                        res.send('Recibos eliminados correctamente');
-                    });
+            // Si todo fue bien, hacemos commit
+            connection.commit((err) => {
+              if (err) {
+                return connection.rollback(() => {
+                  console.error(
+                    "Error al hacer commit de la transacción:",
+                    err
+                  );
+                  res.status(500).send("Error al finalizar la transacción");
                 });
+              }
+              res.send("Recibos eliminados correctamente");
             });
-        } else {
-            connection.rollback(() => {
-                res.status(404).send('No se encontraron datos para eliminar en infopagos');
-            });
-        }
+          });
+        });
+      } else {
+        connection.rollback(() => {
+          res
+            .status(404)
+            .send("No se encontraron datos para eliminar en infopagos");
+        });
+      }
     });
   });
 });
 
-
-
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, '0.0.0.0',() => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor iniciado en http://0.0.0.0:${PORT}`);
 });

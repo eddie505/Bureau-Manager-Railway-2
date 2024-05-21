@@ -8,10 +8,18 @@ import path from "path";
 import fontkit from "@pdf-lib/fontkit";
 import dotenv from "dotenv";
 dotenv.config();
+import {
+  SECRET_KEY,
+  DB_HOST,
+  DB_USER,
+  DB_PASSWORD,
+  DB_NAME,
+  DB_PORT,
+  PORT,
+} from "../config.js";
 
 const app = express();
 import jwt from "jsonwebtoken";
-const secretKey = process.env.SECRET_KEY;
 
 import bcrypt from "bcrypt";
 const saltRounds = 10;
@@ -22,10 +30,11 @@ const saltRounds = 10;
 app.use(cors());
 
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "n0m3l0",
-  database: "bureau-manager",
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  port: DB_PORT,
 });
 
 connection.connect((error) => {
@@ -949,7 +958,7 @@ app.post("/api/getAdmin", (req, res) => {
               console.error(error);
               res.status(500).send("Error al verificar la contraseña");
             } else if (isMatch) {
-              const token = jwt.sign({ correo_administrador }, secretKey, {
+              const token = jwt.sign({ correo_administrador }, SECRET_KEY, {
                 expiresIn: "5m",
               });
               res.json({ token, id_administrador: user.id_administrador });
@@ -1411,7 +1420,6 @@ app.post("/api/eliminarRecibos", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor iniciado en http://0.0.0.0:${PORT}`);
 });

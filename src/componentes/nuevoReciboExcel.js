@@ -311,7 +311,7 @@ function NuevoReciboExcel() {
         `${SERVER_URL}/api/registrarInfoPagosCompleto`,
         datosAdeudos
       );
-      await axios.post("${SERVER_URL}/api/registrarRecibo", datosRecibo);
+      await axios.post(`${SERVER_URL}/api/registrarRecibo`, datosRecibo);
       await axios.post(
         `${SERVER_URL}/api/registrarInfoPagosCompleto`,
         datosInfoPagos

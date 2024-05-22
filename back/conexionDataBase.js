@@ -20,6 +20,9 @@ import {
   SERVER_URL,
 } from "../src/config.js";
 
+// Permitir solicitudes CORS desde cualquier origen
+app.use(cors());
+
 const app = express();
 import jwt from "jsonwebtoken";
 
@@ -45,9 +48,6 @@ connection.connect((error) => {
 // Configurar body-parser para manejar solicitudes POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// Permitir solicitudes CORS desde cualquier origen
-app.use(cors());
 
 import { PDFDocument, rgb } from "pdf-lib";
 
@@ -444,7 +444,7 @@ async function crearPDFImagenMultiple(datosList) {
     });
   });
 
-  //${SERVER_URL}${SERVER_URL}/api
+  ///api
 
   const pdfBytes = await pdfDoc.save();
   return pdfBytes;
@@ -452,7 +452,7 @@ async function crearPDFImagenMultiple(datosList) {
 
 // Endpoint para manejar solicitudes POST
 //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-app.post(`${SERVER_URL}/api/registrarCuenta`, (req, res) => {
+app.post(`/api/registrarCuenta`, (req, res) => {
   console.log(req.body);
   const {
     nombre_administrador,
@@ -499,7 +499,7 @@ app.post(`${SERVER_URL}/api/registrarCuenta`, (req, res) => {
   );
 });
 
-app.post(`${SERVER_URL}/api/registrarDepartamento`, (req, res) => {
+app.post(`/api/registrarDepartamento`, (req, res) => {
   connection.connect((error) => {
     if (error) throw error;
     console.log("Conexión a la base de datos MySQL establecida");
@@ -515,7 +515,7 @@ app.post(`${SERVER_URL}/api/registrarDepartamento`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/registrarCondominio`, (req, res) => {
+app.post(`/api/registrarCondominio`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const {
@@ -537,7 +537,7 @@ app.post(`${SERVER_URL}/api/registrarCondominio`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/registrarEdificio`, (req, res) => {
+app.post(`/api/registrarEdificio`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const { id_condominio, nombre_edificio } = req.body;
@@ -549,7 +549,7 @@ app.post(`${SERVER_URL}/api/registrarEdificio`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/registrarInquilino`, (req, res) => {
+app.post(`/api/registrarInquilino`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const {
@@ -575,7 +575,7 @@ app.post(`${SERVER_URL}/api/registrarInquilino`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/registrarRecibo`, (req, res) => {
+app.post(`/api/registrarRecibo`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const recibos = Array.isArray(req.body) ? req.body : [req.body];
@@ -612,7 +612,7 @@ app.post(`${SERVER_URL}/api/registrarRecibo`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/registrarInfoPagosCompleto`, (req, res) => {
+app.post(`/api/registrarInfoPagosCompleto`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const pagos = Array.isArray(req.body) ? req.body : [req.body];
@@ -633,7 +633,7 @@ app.post(`${SERVER_URL}/api/registrarInfoPagosCompleto`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/enviarRecibosCorreoElectronico`, (req, res) => {
+app.post(`/api/enviarRecibosCorreoElectronico`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const lista = req.body;
@@ -761,7 +761,7 @@ app.post(`${SERVER_URL}/api/enviarRecibosCorreoElectronico`, (req, res) => {
   }
 });
 
-app.post(`${SERVER_URL}/api/generarPDFMasivo`, async (req, res) => {
+app.post(`/api/generarPDFMasivo`, async (req, res) => {
   try {
     console.log(req.body);
     const lista = req.body;
@@ -868,7 +868,7 @@ app.post(`${SERVER_URL}/api/generarPDFMasivo`, async (req, res) => {
 
 //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
-app.post(`${SERVER_URL}/api/actualizarCondominio`, (req, res) => {
+app.post(`/api/actualizarCondominio`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const {
@@ -890,7 +890,7 @@ app.post(`${SERVER_URL}/api/actualizarCondominio`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/actualizarEdificio`, (req, res) => {
+app.post(`/api/actualizarEdificio`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const { id_edificio, nombre_edificio } = req.body;
@@ -902,7 +902,7 @@ app.post(`${SERVER_URL}/api/actualizarEdificio`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/actualizarDepartamento`, (req, res) => {
+app.post(`/api/actualizarDepartamento`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const { id_departamento, nombre_departamento } = req.body;
@@ -914,7 +914,7 @@ app.post(`${SERVER_URL}/api/actualizarDepartamento`, (req, res) => {
   });
 });
 
-app.post(`${SERVER_URL}/api/actualizarInquilino`, (req, res) => {
+app.post(`/api/actualizarInquilino`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const {
@@ -940,7 +940,7 @@ app.post(`${SERVER_URL}/api/actualizarInquilino`, (req, res) => {
 
 //███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
-app.post(`${SERVER_URL}/api/getAdmin`, (req, res) => {
+app.post(`/api/getAdmin`, (req, res) => {
   console.log(req.body);
   const { correo_administrador, contraseña_administrador } = req.body;
   connection.query(
@@ -979,7 +979,7 @@ app.post(`${SERVER_URL}/api/getAdmin`, (req, res) => {
   );
 });
 
-app.get(`${SERVER_URL}/api/getAdmin/:id_administrador`, (req, res) => {
+app.get(`/api/getAdmin/:id_administrador`, (req, res) => {
   const { id_administrador } = req.params;
 
   connection.query(
@@ -999,7 +999,7 @@ app.get(`${SERVER_URL}/api/getAdmin/:id_administrador`, (req, res) => {
   );
 });
 
-app.get(`${SERVER_URL}/api/getRecibos/:id_administrador`, (req, res) => {
+app.get(`/api/getRecibos/:id_administrador`, (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
   const sql = `
     SELECT r.*, i.correo_inquilino, 
@@ -1037,7 +1037,7 @@ app.get(`${SERVER_URL}/api/getRecibos/:id_administrador`, (req, res) => {
   });
 });
 
-app.get(`${SERVER_URL}/api/getCondominios/:id_administrador`, (req, res) => {
+app.get(`/api/getCondominios/:id_administrador`, (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
   connection.query(
     "SELECT * FROM condominio WHERE id_administrador = ?",
@@ -1061,7 +1061,7 @@ app.get(`${SERVER_URL}/api/getCondominios/:id_administrador`, (req, res) => {
   );
 });
 
-app.post(`${SERVER_URL}/api/getEdificiosbyCondominio`, (req, res) => {
+app.post(`/api/getEdificiosbyCondominio`, (req, res) => {
   console.log(req.body);
   const { id_condominio } = req.body;
   connection.query(
@@ -1079,7 +1079,7 @@ app.post(`${SERVER_URL}/api/getEdificiosbyCondominio`, (req, res) => {
   );
 });
 
-app.post(`${SERVER_URL}/api/getDepartamentosbyEdificios`, (req, res) => {
+app.post(`/api/getDepartamentosbyEdificios`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const { id_edificio } = req.body;
@@ -1098,7 +1098,7 @@ app.post(`${SERVER_URL}/api/getDepartamentosbyEdificios`, (req, res) => {
   );
 });
 
-app.post(`${SERVER_URL}/api/getInquilinosbyDepartamento`, (req, res) => {
+app.post(`/api/getInquilinosbyDepartamento`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const { id_departamento } = req.body;
@@ -1117,7 +1117,7 @@ app.post(`${SERVER_URL}/api/getInquilinosbyDepartamento`, (req, res) => {
   );
 });
 
-app.get(`${SERVER_URL}/api/getInquilinosByCondominio`, (req, res) => {
+app.get(`/api/getInquilinosByCondominio`, (req, res) => {
   const { id_condominio } = req.query;
   const query = `
     SELECT i.nombre_inquilino, i.apellino_paterno_inquilino, i.apellino_materno_inquilino, 
@@ -1137,7 +1137,7 @@ app.get(`${SERVER_URL}/api/getInquilinosByCondominio`, (req, res) => {
   });
 });
 
-app.get(`${SERVER_URL}/api/getEdificios`, (req, res) => {
+app.get(`/api/getEdificios`, (req, res) => {
   console.log("-------------------------------");
   connection.query("SELECT * FROM edificio", (error, results) => {
     if (error) {
@@ -1150,7 +1150,7 @@ app.get(`${SERVER_URL}/api/getEdificios`, (req, res) => {
   });
 });
 
-app.get(`${SERVER_URL}/api/getInfoCondominio`, (req, res) => {
+app.get(`/api/getInfoCondominio`, (req, res) => {
   console.log("-------------------------------");
   console.log(req.body);
   const { id_condominio } = req.body;
@@ -1169,7 +1169,7 @@ app.get(`${SERVER_URL}/api/getInfoCondominio`, (req, res) => {
   );
 });
 
-app.get(`${SERVER_URL}/api/getInfoPagos/:id_administrador`, (req, res) => {
+app.get(`/api/getInfoPagos/:id_administrador`, (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
   const sql = `
     SELECT
@@ -1195,71 +1195,66 @@ app.get(`${SERVER_URL}/api/getInfoPagos/:id_administrador`, (req, res) => {
   });
 });
 
-app.get(
-  `${SERVER_URL}/api/getRecibosFiltrados/:id_administrador`,
-  (req, res) => {
-    const id_administrador = parseInt(req.params.id_administrador);
-    const { condominio, edificio, departamento, mes, anio } = req.query;
+app.get(`/api/getRecibosFiltrados/:id_administrador`, (req, res) => {
+  const id_administrador = parseInt(req.params.id_administrador);
+  const { condominio, edificio, departamento, mes, anio } = req.query;
 
-    let sql = `
+  let sql = `
     SELECT r.*, i.correo_inquilino IS NOT NULL AS tiene_correo
     FROM reciboCompleto r
     JOIN inquilino i ON r.id_inquilino = i.id_inquilino
     WHERE r.id_administrador = ?
   `;
-    let values = [id_administrador];
+  let values = [id_administrador];
 
-    if (condominio) {
-      sql += " AND r.id_condominio = ?";
-      values.push(condominio);
-    }
-    if (edificio) {
-      sql += " AND r.id_edificio = ?";
-      values.push(edificio);
-    }
-    if (departamento) {
-      sql += " AND r.id_departamento = ?";
-      values.push(departamento);
-    }
-    if (mes && anio) {
-      sql += " AND MONTH(r.fecha) = ? AND YEAR(r.fecha) = ?";
-      values.push(mes, anio);
-    }
-
-    connection.query(sql, values, (error, results) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send("Error al obtener los registros filtrados");
-      } else {
-        const recibosDesencriptados = results.map((recibo) => {
-          return {
-            ...recibo,
-            //nombre_completo_inquilino: CryptoJS.AES.decrypt(recibo.nombre_completo_inquilino, secretKey).toString(CryptoJS.enc.Utf8),
-            nombre_completo_inquilino: recibo.nombre_completo_inquilino,
-            //cuota_ordinaria: CryptoJS.AES.decrypt(recibo.cuota_ordinaria, secretKey).toString(CryptoJS.enc.Utf8),
-            cuota_ordinaria: recibo.cuota_ordinaria,
-            //cuota_extraordinaria: CryptoJS.AES.decrypt(recibo.cuota_extraordinaria, secretKey).toString(CryptoJS.enc.Utf8),
-            cuota_extraordinaria: recibo.cuota_extraordinaria,
-            //cuota_penalizacion: CryptoJS.AES.decrypt(recibo.cuota_penalizacion, secretKey).toString(CryptoJS.enc.Utf8),
-            cuota_penalizacion: recibo.cuota_penalizacion,
-            //cuota_reserva: CryptoJS.AES.decrypt(recibo.cuota_reserva, secretKey).toString(CryptoJS.enc.Utf8),
-            cuota_reserva: recibo.cuota_reserva,
-            //cuota_adeudos: CryptoJS.AES.decrypt(recibo.cuota_adeudos, secretKey).toString(CryptoJS.enc.Utf8),
-            cuota_adeudos: recibo.cuota_adeudos,
-            tiene_correo: recibo.tiene_correo === 1,
-          };
-        });
-        res.json(recibosDesencriptados);
-      }
-    });
+  if (condominio) {
+    sql += " AND r.id_condominio = ?";
+    values.push(condominio);
   }
-);
+  if (edificio) {
+    sql += " AND r.id_edificio = ?";
+    values.push(edificio);
+  }
+  if (departamento) {
+    sql += " AND r.id_departamento = ?";
+    values.push(departamento);
+  }
+  if (mes && anio) {
+    sql += " AND MONTH(r.fecha) = ? AND YEAR(r.fecha) = ?";
+    values.push(mes, anio);
+  }
 
-app.get(
-  `${SERVER_URL}/api/getInfoPagosFiltrados/:id_administrador`,
-  (req, res) => {
-    const { condominio, edificio, anio, mes } = req.query;
-    let query = `
+  connection.query(sql, values, (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Error al obtener los registros filtrados");
+    } else {
+      const recibosDesencriptados = results.map((recibo) => {
+        return {
+          ...recibo,
+          //nombre_completo_inquilino: CryptoJS.AES.decrypt(recibo.nombre_completo_inquilino, secretKey).toString(CryptoJS.enc.Utf8),
+          nombre_completo_inquilino: recibo.nombre_completo_inquilino,
+          //cuota_ordinaria: CryptoJS.AES.decrypt(recibo.cuota_ordinaria, secretKey).toString(CryptoJS.enc.Utf8),
+          cuota_ordinaria: recibo.cuota_ordinaria,
+          //cuota_extraordinaria: CryptoJS.AES.decrypt(recibo.cuota_extraordinaria, secretKey).toString(CryptoJS.enc.Utf8),
+          cuota_extraordinaria: recibo.cuota_extraordinaria,
+          //cuota_penalizacion: CryptoJS.AES.decrypt(recibo.cuota_penalizacion, secretKey).toString(CryptoJS.enc.Utf8),
+          cuota_penalizacion: recibo.cuota_penalizacion,
+          //cuota_reserva: CryptoJS.AES.decrypt(recibo.cuota_reserva, secretKey).toString(CryptoJS.enc.Utf8),
+          cuota_reserva: recibo.cuota_reserva,
+          //cuota_adeudos: CryptoJS.AES.decrypt(recibo.cuota_adeudos, secretKey).toString(CryptoJS.enc.Utf8),
+          cuota_adeudos: recibo.cuota_adeudos,
+          tiene_correo: recibo.tiene_correo === 1,
+        };
+      });
+      res.json(recibosDesencriptados);
+    }
+  });
+});
+
+app.get(`/api/getInfoPagosFiltrados/:id_administrador`, (req, res) => {
+  const { condominio, edificio, anio, mes } = req.query;
+  let query = `
     SELECT
       c.nombre_condominio,
       d.numero_departamento,
@@ -1272,92 +1267,82 @@ app.get(
     INNER JOIN condominio c ON p.id_condominio = c.id_condominio
     WHERE p.id_administrador = ?
   `;
-    let params = [req.params.id_administrador];
+  let params = [req.params.id_administrador];
 
-    if (condominio) {
-      query += " AND c.id_condominio = ?";
-      params.push(condominio);
-    }
-    if (edificio) {
-      query += " AND p.id_edificio = ?";
-      params.push(edificio);
-    }
-    if (anio && mes) {
-      query += " AND YEAR(p.fecha_pago) = ? AND MONTH(p.fecha_pago) = ?";
-      params.push(anio, mes);
-    }
-
-    connection.query(query, params, (error, results) => {
-      if (error) {
-        console.error("Error al obtener datos filtrados:", error);
-        res.status(500).send("Error al obtener datos filtrados");
-      } else {
-        res.json(results);
-      }
-    });
+  if (condominio) {
+    query += " AND c.id_condominio = ?";
+    params.push(condominio);
   }
-);
+  if (edificio) {
+    query += " AND p.id_edificio = ?";
+    params.push(edificio);
+  }
+  if (anio && mes) {
+    query += " AND YEAR(p.fecha_pago) = ? AND MONTH(p.fecha_pago) = ?";
+    params.push(anio, mes);
+  }
 
-app.get(
-  `${SERVER_URL}/api/verificarRecibo/:id_condominio/:no_recibo`,
-  (req, res) => {
-    const { id_condominio, no_recibo } = req.params;
-    const sql = `
+  connection.query(query, params, (error, results) => {
+    if (error) {
+      console.error("Error al obtener datos filtrados:", error);
+      res.status(500).send("Error al obtener datos filtrados");
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get(`/api/verificarRecibo/:id_condominio/:no_recibo`, (req, res) => {
+  const { id_condominio, no_recibo } = req.params;
+  const sql = `
     SELECT COUNT(*) AS count
     FROM reciboCompleto
     WHERE id_condominio = ? AND no_recibo = ?;
   `;
-    connection.query(sql, [id_condominio, no_recibo], (error, results) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send("Error al verificar el recibo");
-      } else {
-        res.json({ existe: results[0].count > 0 });
-      }
-    });
-  }
-);
+  connection.query(sql, [id_condominio, no_recibo], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Error al verificar el recibo");
+    } else {
+      res.json({ existe: results[0].count > 0 });
+    }
+  });
+});
 
-app.get(
-  `${SERVER_URL}/api/verificarCodigoInquilino/:codigo_inquilino`,
-  (req, res) => {
-    const { codigo_inquilino } = req.params;
-    const sql = `
+app.get(`/api/verificarCodigoInquilino/:codigo_inquilino`, (req, res) => {
+  const { codigo_inquilino } = req.params;
+  const sql = `
     SELECT COUNT(*) AS count FROM inquilino WHERE codigo_inquilino = ?
   `;
-    connection.query(sql, [codigo_inquilino], (error, results) => {
+  connection.query(sql, [codigo_inquilino], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Error al verificar el código del inquilino");
+    } else {
+      res.json({ existe: results[0].count > 0 });
+    }
+  });
+});
+
+app.get(`/api/obtenerUltimoNumeroRecibo/:id_condominio`, async (req, res) => {
+  try {
+    const id_condominio = req.params.id_condominio;
+    const query = `SELECT MAX(no_recibo) AS ultimoNumeroRecibo FROM recibocompleto WHERE id_condominio = ?`;
+    connection.query(query, [id_condominio], (error, results) => {
       if (error) {
         console.error(error);
-        res.status(500).send("Error al verificar el código del inquilino");
+        res.status(500).send("Error al obtener el último número de recibo");
       } else {
-        res.json({ existe: results[0].count > 0 });
+        res.json(results[0]);
       }
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error en el servidor");
   }
-);
+});
 
-app.get(
-  `${SERVER_URL}/api/obtenerUltimoNumeroRecibo/:id_condominio`,
-  async (req, res) => {
-    try {
-      const id_condominio = req.params.id_condominio;
-      const query = `SELECT MAX(no_recibo) AS ultimoNumeroRecibo FROM recibocompleto WHERE id_condominio = ?`;
-      connection.query(query, [id_condominio], (error, results) => {
-        if (error) {
-          console.error(error);
-          res.status(500).send("Error al obtener el último número de recibo");
-        } else {
-          res.json(results[0]);
-        }
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error en el servidor");
-    }
-  }
-);
-
-app.post(`${SERVER_URL}/api/eliminarRecibos`, (req, res) => {
+app.post(`/api/eliminarRecibos`, (req, res) => {
   const { ids } = req.body;
   if (ids.length === 0) {
     return res.status(400).send("No se proporcionaron IDs de recibos.");

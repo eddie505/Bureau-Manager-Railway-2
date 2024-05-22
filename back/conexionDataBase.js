@@ -17,7 +17,7 @@ import {
   DB_NAME,
   DB_PORT,
   PORT,
-} from "../config.js";
+} from "../src/config.js";
 
 const app = express();
 import jwt from "jsonwebtoken";

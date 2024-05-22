@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 function EditoInquilino() {
   const [formulario, setFormulario] = useState({

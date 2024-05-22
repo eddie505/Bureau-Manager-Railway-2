@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { IoIosCreate } from "react-icons/io";
 import * as XLSX from "xlsx";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 function NuevoReciboExcel() {
   const authData = JSON.parse(localStorage.getItem("authData"));

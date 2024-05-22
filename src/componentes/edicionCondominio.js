@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 //${SERVER_URL}
 

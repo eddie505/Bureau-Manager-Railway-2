@@ -4,7 +4,7 @@ import axios from "axios";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 function CondominiosComponent() {
   const authData = JSON.parse(localStorage.getItem("authData"));

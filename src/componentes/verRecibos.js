@@ -7,7 +7,7 @@ import {
   FaFilter,
   FaTrash,
 } from "react-icons/fa";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 function VerRecibo() {
   const [visible, setVisible] = useState(false);

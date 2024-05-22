@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import e from "connect-flash";
 import { SiMicrosoftexcel } from "react-icons/si";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 function NuevoRecibo() {
   const authData = JSON.parse(localStorage.getItem("authData"));

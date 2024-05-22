@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.js";
-import { SERVER_URL } from "../../config.js";
+import { SERVER_URL } from "../config.js";
 
 function MenuInicial() {
   const { logout } = useAuth();

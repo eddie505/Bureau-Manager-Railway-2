@@ -6,7 +6,7 @@ import {
   FaArrowCircleRight,
   FaFilter,
 } from "react-icons/fa";
-import { SERVER_URL } from "../../config";
+import { SERVER_URL } from "../config.js";
 
 function InfoPagos() {
   const authData = JSON.parse(localStorage.getItem("authData"));

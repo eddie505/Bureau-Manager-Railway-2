@@ -6,6 +6,7 @@ import {
   FaArrowCircleRight,
   FaFilter,
 } from "react-icons/fa";
+import { SERVER_URL } from "../../config";
 
 function InfoPagos() {
   const authData = JSON.parse(localStorage.getItem("authData"));
@@ -70,7 +71,7 @@ function InfoPagos() {
   const cargarCondominios = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/getCondominios/${id_administrador}`
+        `${SERVER_URL}/api/getCondominios/${id_administrador}`
       );
       setCondominios(response.data);
     } catch (error) {
@@ -81,7 +82,7 @@ function InfoPagos() {
   const cargarEdificios = async (idCondominio) => {
     try {
       const response = await axios.post(
-        `http://localhost:4000/api/getEdificiosbyCondominio`,
+        `${SERVER_URL}/api/getEdificiosbyCondominio`,
         { id_condominio: idCondominio }
       );
       setEdificios(response.data);
@@ -104,11 +105,11 @@ function InfoPagos() {
 
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/getInfoPagosFiltrados/${id_administrador}`,
+        `${SERVER_URL}/api/getInfoPagosFiltrados/${id_administrador}`,
         { params }
       );
       const pagos = await axios.get(
-        `http://localhost:4000/api/getInfoPagos/${id_administrador}`
+        `${SERVER_URL}/api/getInfoPagos/${id_administrador}`
       );
       setDatosPagos(response.data);
       setDatosPagosTotal(pagos.data);

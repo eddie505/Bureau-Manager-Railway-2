@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { IoIosCreate } from "react-icons/io";
 import * as XLSX from "xlsx";
+import { SERVER_URL } from "../../config";
 
 function NuevoReciboExcel() {
   const authData = JSON.parse(localStorage.getItem("authData"));
@@ -37,7 +38,7 @@ function NuevoReciboExcel() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4000/api/getCondominios/${id_administrador}`)
+      .get(`${SERVER_URL}/api/getCondominios/${id_administrador}`)
       .then((response) => {
         setCondominios(response.data);
       })
@@ -54,7 +55,7 @@ function NuevoReciboExcel() {
   useEffect(() => {
     if (selectedCondominio) {
       axios
-        .post(`http://localhost:4000/api/getEdificiosbyCondominio`, {
+        .post(`${SERVER_URL}/api/getEdificiosbyCondominio`, {
           id_condominio: selectedCondominio,
         })
         .then((response) => {
@@ -129,7 +130,7 @@ function NuevoReciboExcel() {
       }
 
       const response = await axios.post(
-        "http://localhost:4000/api/getDepartamentosByEdificios",
+        `${SERVER_URL}/api/getDepartamentosByEdificios`,
         { id_edificio: selectedEdificio }
       );
       const deptosBD = response.data;
@@ -163,7 +164,7 @@ function NuevoReciboExcel() {
       }
 
       const checkInquilinosPromises = deptosBD.map((depto) =>
-        axios.post("http://localhost:4000/api/getInquilinosbyDepartamento", {
+        axios.post(`${SERVER_URL}/api/getInquilinosbyDepartamento`, {
           id_departamento: depto.id_departamento,
         })
       );
@@ -192,7 +193,7 @@ function NuevoReciboExcel() {
         if (fila[10]) {
           let no_recibo = fila[10].toString().trim();
           const response = await axios.get(
-            `http://localhost:4000/api/verificarRecibo/${selectedCondominio}/${no_recibo}`
+            `${SERVER_URL}/api/verificarRecibo/${selectedCondominio}/${no_recibo}`
           );
           if (response.data.existe) {
             setError(
@@ -216,7 +217,7 @@ function NuevoReciboExcel() {
 
           if (deptoEncontrado) {
             const responseInquilino = await axios.post(
-              "http://localhost:4000/api/getInquilinosbyDepartamento",
+              `${SERVER_URL}/api/getInquilinosbyDepartamento`,
               { id_departamento: deptoEncontrado.id_departamento }
             );
             if (responseInquilino.data.length > 0) {
@@ -255,7 +256,7 @@ function NuevoReciboExcel() {
           if (!deptoEncontrado) continue;
 
           const inquilinos = await axios
-            .post("http://localhost:4000/api/getInquilinosbyDepartamento", {
+            .post(`${SERVER_URL}/api/getInquilinosbyDepartamento`, {
               id_departamento: deptoEncontrado.id_departamento,
             })
             .then((res) => res.data);
@@ -307,15 +308,12 @@ function NuevoReciboExcel() {
         }
       }
       await axios.post(
-        "http://localhost:4000/api/registrarInfoPagosCompleto",
+        `${SERVER_URL}/api/registrarInfoPagosCompleto`,
         datosAdeudos
       );
+      await axios.post("${SERVER_URL}/api/registrarRecibo", datosRecibo);
       await axios.post(
-        "http://localhost:4000/api/registrarRecibo",
-        datosRecibo
-      );
-      await axios.post(
-        "http://localhost:4000/api/registrarInfoPagosCompleto",
+        `${SERVER_URL}/api/registrarInfoPagosCompleto`,
         datosInfoPagos
       );
 

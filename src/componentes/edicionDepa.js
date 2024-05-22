@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { SERVER_URL } from "../../config";
 
 function EditoDepartamento() {
   const [formulario, setFormulario] = useState({
@@ -24,7 +25,7 @@ function EditoDepartamento() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`http://localhost:4000/api/getCondominios/${id_administrador}`)
+      .get(`${SERVER_URL}/api/getCondominios/${id_administrador}`)
       .then((resultado) => {
         setCondominios(resultado.data);
         if (resultado.data.length > 0) {
@@ -51,7 +52,7 @@ function EditoDepartamento() {
   useEffect(() => {
     if (idCondominioSeleccionado) {
       axios
-        .post("http://localhost:4000/api/getEdificiosbyCondominio", {
+        .post(`${SERVER_URL}/api/getEdificiosbyCondominio`, {
           id_condominio: idCondominioSeleccionado,
         })
         .then((response) => {
@@ -86,7 +87,7 @@ function EditoDepartamento() {
 
   const cargarDepartamentos = (idEdificio) => {
     axios
-      .post("http://localhost:4000/api/getDepartamentosbyEdificios", {
+      .post(`${SERVER_URL}/api/getDepartamentosbyEdificios`, {
         id_edificio: idEdificio,
       })
       .then((resultado) => {
@@ -179,7 +180,7 @@ function EditoDepartamento() {
     }
     try {
       const resultado = await axios.post(
-        "http://localhost:4000/api/actualizarDepartamento",
+        `${SERVER_URL}/api/actualizarDepartamento`,
         formulario
       );
       if (resultado.data === 200) {

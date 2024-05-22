@@ -1,4 +1,4 @@
-export const PORT = process.env.PORT;
+export const PORT = process.env.PORT || 7110;
 export const DB_HOST = process.env.DB_HOST || "localhost";
 export const DB_PASSWORD = process.env.DB_PASSWORD || "n0m3l0";
 export const DB_USER = process.env.DB_USER || "root";

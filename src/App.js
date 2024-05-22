@@ -24,6 +24,7 @@ import InfoPagos from "./componentes/infoPagos.js";
 import ComponenteCED from "./componentes/componentesCED.js";
 import ComponenteInquilino from "./componentes/componentesInquilino.js";
 import GestionCondominios from "./componentes/gestionCondominios.js";
+import { SERVER_URL } from "./config.js";
 
 function PrivateRoute({ children }) {
   const { authToken } = useAuth();

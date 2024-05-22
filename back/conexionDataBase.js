@@ -29,8 +29,6 @@ const saltRounds = 10;
 //const CryptoJS = require("crypto-js");
 //const secretKeyAES = process.env.SECRET_KEY;
 
-app.use(cors());
-
 const connection = mysql.createConnection({
   host: DB_HOST,
   user: DB_USER,
@@ -1039,7 +1037,7 @@ app.get(`${SERVER_URL}/api/getRecibos/:id_administrador`, (req, res) => {
   });
 });
 
-app.get($`{SERVER_URL}/api/getCondominios/:id_administrador`, (req, res) => {
+app.get(`${SERVER_URL}/api/getCondominios/:id_administrador`, (req, res) => {
   const id_administrador = parseInt(req.params.id_administrador);
   connection.query(
     "SELECT * FROM condominio WHERE id_administrador = ?",

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+//Prueba de cambio
+
 function MenuInquilino() {
   useEffect(() => {
     document.body.classList.add("body1");

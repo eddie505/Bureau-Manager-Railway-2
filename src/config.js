@@ -7,4 +7,4 @@ export const DB_PORT = process.env.DB_PORT || 3306;
 export const SECRET_KEY = process.env.SECRET_KEY || "secret_key";
 export const SERVER_URL =
   process.env.SERVER_URL ||
-  "https://bureau-manager-railway-2-production.up.railway.app/";
+  "https://bureau-manager-railway-2-production.up.railway.app";

@@ -20,10 +20,9 @@ import {
   SERVER_URL,
 } from "../src/config.js";
 
+const app = express();
 // Permitir solicitudes CORS desde cualquier origen
 app.use(cors());
-
-const app = express();
 import jwt from "jsonwebtoken";
 
 import bcrypt from "bcrypt";

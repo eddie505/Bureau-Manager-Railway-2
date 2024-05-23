@@ -7,8 +7,6 @@ import nodemailer from "nodemailer";
 import fs from "fs";
 import path from "path";
 import fontkit from "@pdf-lib/fontkit";
-import dotenv from "dotenv";
-dotenv.config();
 import {
   SECRET_KEY,
   DB_HOST,

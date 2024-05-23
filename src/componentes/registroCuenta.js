@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function RegistrarCuenta() {
   const [formulario, setFormulario] = useState({
@@ -34,7 +34,7 @@ function RegistrarCuenta() {
     if (validateForm()) {
       try {
         const resultado = await axios.post(
-          `${SERVER_URL}/api/registrarCuenta`,
+          `${REACT_APP_SERVER_URL}/api/registrarCuenta`,
           formulario
         );
         if (resultado.data === "Cuenta registrada exitosamente") {

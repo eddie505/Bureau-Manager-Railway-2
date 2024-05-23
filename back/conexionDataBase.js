@@ -15,7 +15,7 @@ import {
   DB_NAME,
   DB_PORT,
   PORT,
-  SERVER_URL,
+  REACT_APP_SERVER_URL,
 } from "../src/config.js";
 
 const app = express();

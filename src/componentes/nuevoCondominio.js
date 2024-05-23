@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function NuevoCondominio() {
   const authData = JSON.parse(localStorage.getItem("authData"));
@@ -62,7 +62,7 @@ function NuevoCondominio() {
     ) {
       try {
         const resultado = await axios.post(
-          `${SERVER_URL}/api/registrarCondominio`,
+          `${REACT_APP_SERVER_URL}/api/registrarCondominio`,
           formulario
         );
         if (resultado.data === 200) {

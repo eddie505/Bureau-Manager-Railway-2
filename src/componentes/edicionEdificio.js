@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function EditoEdificio() {
   const [formulario, setFormulario] = useState({
@@ -22,7 +22,7 @@ function EditoEdificio() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length === 0) {
           setFormulario({
@@ -44,7 +44,10 @@ function EditoEdificio() {
         diccionario["id_condominio"] = parseInt(selectedCondominio);
 
         axios
-          .post(`${SERVER_URL}/api/getEdificiosbyCondominio`, diccionario)
+          .post(
+            `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+            diccionario
+          )
           .then((resultado) => {
             if (resultado.data.length === 0) {
               setFormulario({
@@ -99,7 +102,10 @@ function EditoEdificio() {
       diccionario["id_condominio"] = selectedCondominio.id_condominio;
 
       axios
-        .post(`${SERVER_URL}/api/getEdificiosbyCondominio`, diccionario)
+        .post(
+          `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+          diccionario
+        )
         .then((resultado) => {
           if (resultado.data.length === 0) {
             setEdificios([]);
@@ -163,7 +169,7 @@ function EditoEdificio() {
     }
     try {
       const resultado = await axios.post(
-        `${SERVER_URL}/api/actualizarEdificio`,
+        `${REACT_APP_SERVER_URL}/api/actualizarEdificio`,
         formulario
       );
       if (resultado.data === 200) {

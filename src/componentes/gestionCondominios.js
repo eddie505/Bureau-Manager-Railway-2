@@ -4,7 +4,7 @@ import axios from "axios";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function CondominiosComponent() {
   const authData = JSON.parse(localStorage.getItem("authData"));
@@ -25,7 +25,7 @@ function CondominiosComponent() {
   const fetchCondominios = async () => {
     try {
       const response = await axios.get(
-        `${SERVER_URL}/api/getCondominios/${id_administrador}`
+        `${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`
       );
       setCondominios(response.data);
     } catch (error) {
@@ -43,7 +43,7 @@ function CondominiosComponent() {
     } else {
       try {
         const response = await axios.post(
-          `${SERVER_URL}/api/getEdificiosbyCondominio`,
+          `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
           { id_condominio: condominio.id_condominio }
         );
         setSelectedCondominio({ ...condominio, edificios: response.data });
@@ -64,7 +64,7 @@ function CondominiosComponent() {
     } else {
       try {
         const response = await axios.post(
-          `${SERVER_URL}/api/getDepartamentosbyEdificios`,
+          `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
           { id_edificio: edificio.id_edificio }
         );
         setSelectedEdificio({ ...edificio, departamentos: response.data });
@@ -77,7 +77,7 @@ function CondominiosComponent() {
   const fetchInquilinosByCondominio = async (id_condominio) => {
     try {
       const response = await axios.get(
-        `${SERVER_URL}/api/getInquilinosByCondominio?id_condominio=${id_condominio}`
+        `${REACT_APP_SERVER_URL}/api/getInquilinosByCondominio?id_condominio=${id_condominio}`
       );
       setInquilinos(response.data);
     } catch (error) {

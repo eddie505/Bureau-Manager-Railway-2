@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function NuevoEdificio() {
   const [formulario, setFormulario] = useState({
@@ -17,7 +17,7 @@ function NuevoEdificio() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length > 0) {
           setCondominios(response.data);
@@ -93,7 +93,7 @@ function NuevoEdificio() {
     }
     try {
       const resultado = await axios.post(
-        `${SERVER_URL}/api/registrarEdificio`,
+        `${REACT_APP_SERVER_URL}/api/registrarEdificio`,
         formulario
       );
       if (resultado.data === 200) {

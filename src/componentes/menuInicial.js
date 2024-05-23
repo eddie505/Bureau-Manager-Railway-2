@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext.js";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function MenuInicial() {
   const { logout } = useAuth();
@@ -16,7 +16,7 @@ function MenuInicial() {
   const fetchAdminInfo = async () => {
     try {
       const response = await fetch(
-        `${SERVER_URL}/api/getAdmin/${id_administrador}`
+        `${REACT_APP_SERVER_URL}/api/getAdmin/${id_administrador}`
       ); // Asegúrate de que el id está siendo correctamente pasado
       const data = await response.json();
       if (response.ok) {

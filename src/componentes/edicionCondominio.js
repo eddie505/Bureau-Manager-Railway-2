@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
-//${SERVER_URL}
+//${REACT_APP_SERVER_URL}
 
 function EditoCondominio() {
   const [formulario, setFormulario] = useState({
@@ -28,7 +28,7 @@ function EditoCondominio() {
   useEffect(() => {
     if (id_administrador) {
       axios
-        .get(`${SERVER_URL}/api/getCondominios/${id_administrador}`)
+        .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
         .then((response) => {
           if (response.data.length > 0) {
             setCondominios(response.data);
@@ -132,7 +132,7 @@ function EditoCondominio() {
     ) {
       try {
         const resultado = await axios.post(
-          `${SERVER_URL}/api/actualizarCondominio`,
+          `${REACT_APP_SERVER_URL}/api/actualizarCondominio`,
           formulario
         );
         if (resultado.data === 200) {

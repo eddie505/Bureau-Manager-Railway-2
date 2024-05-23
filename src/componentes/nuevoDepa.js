@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../config.js";
+import { REACT_APP_SERVER_URL } from "../config.js";
 
 function EditoEdificio() {
   const [formulario, setFormulario] = useState({
@@ -24,7 +24,7 @@ function EditoEdificio() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
       .then((resultado) => {
         if (resultado.data.length > 0) {
           setCondominios(resultado.data);
@@ -49,7 +49,7 @@ function EditoEdificio() {
   }, []);
 
   /*useEffect(() => {
-        axios.get(`${SERVER_URL}/api/getEdificios`)
+        axios.get(`${REACT_APP_SERVER_URL}/api/getEdificios`)
           .then(resultado => {
             if (resultado.data.length === 0) {
               setFormulario({
@@ -71,7 +71,7 @@ function EditoEdificio() {
   useEffect(() => {
     if (idCondominioSeleccionado) {
       axios
-        .post(`${SERVER_URL}/api/getEdificiosbyCondominio`, {
+        .post(`${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`, {
           id_condominio: idCondominioSeleccionado,
         })
         .then((resultado) => {
@@ -133,7 +133,7 @@ function EditoEdificio() {
     }
     try {
       const resultado = await axios.post(
-        `${SERVER_URL}/api/registrarDepartamento`,
+        `${REACT_APP_SERVER_URL}/api/registrarDepartamento`,
         formulario
       );
       if (resultado.data === 200) {

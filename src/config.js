@@ -5,4 +5,5 @@ export const DB_USER = process.env.DB_USER || "root";
 export const DB_NAME = process.env.DB_NAME || "bureau-manager";
 export const DB_PORT = process.env.DB_PORT || 3306;
 export const SECRET_KEY = process.env.SECRET_KEY || "secret_key";
-export const SERVER_URL = process.env.SERVER_URL || "http://localhost:4000";
+export const REACT_APP_SERVER_URL =
+  process.env.REACT_APP_SERVER_URL || "http://localhost:4000";

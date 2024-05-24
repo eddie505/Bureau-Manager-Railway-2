@@ -34,7 +34,7 @@ function RegistrarCuenta() {
     if (validateForm()) {
       try {
         const resultado = await axios.post(
-          `${REACT_APP_SERVER_URL}/api/registrarCuenta`,
+          `${REACT_APP_SERVER_URL}/registrarCuenta`,
           formulario
         );
         if (resultado.data === "Cuenta registrada exitosamente") {

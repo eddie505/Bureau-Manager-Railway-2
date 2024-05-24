@@ -24,7 +24,7 @@ function EditoEdificio() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
       .then((resultado) => {
         if (resultado.data.length > 0) {
           setCondominios(resultado.data);

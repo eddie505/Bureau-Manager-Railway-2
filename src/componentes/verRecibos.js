@@ -76,7 +76,7 @@ function VerRecibo() {
       const authData = JSON.parse(localStorage.getItem("authData"));
       const id_administrador = parseInt(authData?.id);
       const response = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`
+        `${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`
       );
       setCondominios(response.data);
     } catch (error) {
@@ -87,7 +87,7 @@ function VerRecibo() {
   const cargarEdificios = async (idCondominio) => {
     try {
       const response = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+        `${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`,
         { id_condominio: idCondominio }
       );
       setEdificios(response.data);
@@ -100,7 +100,7 @@ function VerRecibo() {
   const cargarDepartamentos = async (idEdificio) => {
     try {
       const response = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+        `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
         { id_edificio: idEdificio }
       );
       setDepartamentos(response.data);
@@ -115,7 +115,7 @@ function VerRecibo() {
     const id_administrador = parseInt(authData?.id);
     try {
       const response = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/getRecibos/${id_administrador}`
+        `${REACT_APP_SERVER_URL}/getRecibos/${id_administrador}`
       );
       colocarRecibos(response);
     } catch (error) {
@@ -164,7 +164,7 @@ function VerRecibo() {
     if (buttonValue === "correo") {
       try {
         const resultado = await axios.post(
-          `${REACT_APP_SERVER_URL}/api/enviarRecibosCorreoElectronico`,
+          `${REACT_APP_SERVER_URL}/enviarRecibosCorreoElectronico`,
           recibosSeleccionados
         );
         if (resultado.data === 200) {
@@ -181,7 +181,7 @@ function VerRecibo() {
     } else {
       try {
         const response = await axios.post(
-          `${REACT_APP_SERVER_URL}/api/generarPDFMasivo`,
+          `${REACT_APP_SERVER_URL}/generarPDFMasivo`,
           recibosSeleccionados,
           {
             responseType: "blob",
@@ -219,7 +219,7 @@ function VerRecibo() {
 
     try {
       const response = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/getRecibosFiltrados/${id_administrador}`,
+        `${REACT_APP_SERVER_URL}/getRecibosFiltrados/${id_administrador}`,
         {
           params: {
             condominio: filtroCondominio || null,
@@ -271,7 +271,7 @@ function VerRecibo() {
       )
     ) {
       try {
-        await axios.post(`${REACT_APP_SERVER_URL}/api/eliminarRecibos`, {
+        await axios.post(`${REACT_APP_SERVER_URL}/eliminarRecibos`, {
           ids: recibosSeleccionados,
         });
         alert("Recibos eliminados correctamente");

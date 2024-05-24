@@ -72,7 +72,7 @@ function NuevoRecibo() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length === 0) {
           setEdificios([]);
@@ -107,7 +107,7 @@ function NuevoRecibo() {
 
           axios
             .post(
-              `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+              `${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`,
               diccionario
             )
             .then((resultado) => {
@@ -141,7 +141,7 @@ function NuevoRecibo() {
 
                 axios
                   .post(
-                    `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+                    `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
                     diccionario2
                   )
                   .then((resultado) => {
@@ -168,7 +168,7 @@ function NuevoRecibo() {
 
                       axios
                         .post(
-                          `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+                          `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
                           diccionario3
                         )
                         .then((resultado) => {
@@ -237,7 +237,7 @@ function NuevoRecibo() {
   const obtenerUltimoNumeroRecibo = async (id_condominio) => {
     try {
       const response = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/obtenerUltimoNumeroRecibo/${id_condominio}`
+        `${REACT_APP_SERVER_URL}/obtenerUltimoNumeroRecibo/${id_condominio}`
       );
       if (response.data.ultimoNumeroRecibo === null) {
         setSiguienteNumeroRecibo(1);
@@ -272,10 +272,7 @@ function NuevoRecibo() {
       diccionario["id_condominio"] = selectedCondominio.id_condominio;
 
       axios
-        .post(
-          `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
-          diccionario
-        )
+        .post(`${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`, diccionario)
         .then((resultado) => {
           if (resultado.data.length === 0) {
             setEdificios([]);
@@ -306,7 +303,7 @@ function NuevoRecibo() {
 
             axios
               .post(
-                `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+                `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
                 diccionario2
               )
               .then((resultado) => {
@@ -330,7 +327,7 @@ function NuevoRecibo() {
 
                   axios
                     .post(
-                      `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+                      `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
                       diccionario3
                     )
                     .then((resultado) => {
@@ -402,7 +399,7 @@ function NuevoRecibo() {
 
       axios
         .post(
-          `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+          `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
           diccionario
         )
         .then((resultado) => {
@@ -426,7 +423,7 @@ function NuevoRecibo() {
 
             axios
               .post(
-                `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+                `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
                 diccionario3
               )
               .then((resultado) => {
@@ -497,7 +494,7 @@ function NuevoRecibo() {
 
       axios
         .post(
-          `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+          `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
           diccionario
         )
         .then((resultado) => {
@@ -707,7 +704,7 @@ function NuevoRecibo() {
 
     try {
       const respuesta = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/verificarRecibo/${formulario.id_condominio}/${formulario.no_recibo}`
+        `${REACT_APP_SERVER_URL}/verificarRecibo/${formulario.id_condominio}/${formulario.no_recibo}`
       );
       if (respuesta.data.existe) {
         setErrorNumero(
@@ -731,11 +728,11 @@ function NuevoRecibo() {
       const datosRecibo = [formulario];
       const datosInfoPagos = [formulario2];
       const resultado = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/registrarRecibo`,
+        `${REACT_APP_SERVER_URL}/registrarRecibo`,
         datosRecibo
       );
       const resultado2 = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/registrarInfoPagosCompleto`,
+        `${REACT_APP_SERVER_URL}/registrarInfoPagosCompleto`,
         datosInfoPagos
       );
       if (resultado.data === 200) {

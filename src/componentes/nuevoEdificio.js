@@ -17,7 +17,7 @@ function NuevoEdificio() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length > 0) {
           setCondominios(response.data);
@@ -93,7 +93,7 @@ function NuevoEdificio() {
     }
     try {
       const resultado = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/registrarEdificio`,
+        `${REACT_APP_SERVER_URL}/registrarEdificio`,
         formulario
       );
       if (resultado.data === 200) {

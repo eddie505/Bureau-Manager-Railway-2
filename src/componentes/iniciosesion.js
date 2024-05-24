@@ -73,7 +73,7 @@ function Formulario() {
     ) {
       try {
         const resultado = await axios.post(
-          `${REACT_APP_SERVER_URL}/api/getAdmin`,
+          `${REACT_APP_SERVER_URL}/getAdmin`,
           formulario
         );
 

@@ -62,7 +62,7 @@ function NuevoCondominio() {
     ) {
       try {
         const resultado = await axios.post(
-          `${REACT_APP_SERVER_URL}/api/registrarCondominio`,
+          `${REACT_APP_SERVER_URL}/registrarCondominio`,
           formulario
         );
         if (resultado.data === 200) {

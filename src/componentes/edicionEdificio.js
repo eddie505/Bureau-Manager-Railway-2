@@ -22,7 +22,7 @@ function EditoEdificio() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length === 0) {
           setFormulario({
@@ -44,10 +44,7 @@ function EditoEdificio() {
         diccionario["id_condominio"] = parseInt(selectedCondominio);
 
         axios
-          .post(
-            `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
-            diccionario
-          )
+          .post(`${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`, diccionario)
           .then((resultado) => {
             if (resultado.data.length === 0) {
               setFormulario({
@@ -102,10 +99,7 @@ function EditoEdificio() {
       diccionario["id_condominio"] = selectedCondominio.id_condominio;
 
       axios
-        .post(
-          `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
-          diccionario
-        )
+        .post(`${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`, diccionario)
         .then((resultado) => {
           if (resultado.data.length === 0) {
             setEdificios([]);
@@ -169,7 +163,7 @@ function EditoEdificio() {
     }
     try {
       const resultado = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/actualizarEdificio`,
+        `${REACT_APP_SERVER_URL}/actualizarEdificio`,
         formulario
       );
       if (resultado.data === 200) {

@@ -25,7 +25,7 @@ function EditoDepartamento() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
       .then((resultado) => {
         setCondominios(resultado.data);
         if (resultado.data.length > 0) {
@@ -52,7 +52,7 @@ function EditoDepartamento() {
   useEffect(() => {
     if (idCondominioSeleccionado) {
       axios
-        .post(`${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`, {
+        .post(`${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`, {
           id_condominio: idCondominioSeleccionado,
         })
         .then((response) => {
@@ -87,7 +87,7 @@ function EditoDepartamento() {
 
   const cargarDepartamentos = (idEdificio) => {
     axios
-      .post(`${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`, {
+      .post(`${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`, {
         id_edificio: idEdificio,
       })
       .then((resultado) => {
@@ -180,7 +180,7 @@ function EditoDepartamento() {
     }
     try {
       const resultado = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/actualizarDepartamento`,
+        `${REACT_APP_SERVER_URL}/actualizarDepartamento`,
         formulario
       );
       if (resultado.data === 200) {

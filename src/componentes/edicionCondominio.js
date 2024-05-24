@@ -28,7 +28,7 @@ function EditoCondominio() {
   useEffect(() => {
     if (id_administrador) {
       axios
-        .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+        .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
         .then((response) => {
           if (response.data.length > 0) {
             setCondominios(response.data);
@@ -132,7 +132,7 @@ function EditoCondominio() {
     ) {
       try {
         const resultado = await axios.post(
-          `${REACT_APP_SERVER_URL}/api/actualizarCondominio`,
+          `${REACT_APP_SERVER_URL}/actualizarCondominio`,
           formulario
         );
         if (resultado.data === 200) {

@@ -71,7 +71,7 @@ function InfoPagos() {
   const cargarCondominios = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`
+        `${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`
       );
       setCondominios(response.data);
     } catch (error) {
@@ -82,7 +82,7 @@ function InfoPagos() {
   const cargarEdificios = async (idCondominio) => {
     try {
       const response = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+        `${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`,
         { id_condominio: idCondominio }
       );
       setEdificios(response.data);
@@ -105,11 +105,11 @@ function InfoPagos() {
 
     try {
       const response = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/getInfoPagosFiltrados/${id_administrador}`,
+        `${REACT_APP_SERVER_URL}/getInfoPagosFiltrados/${id_administrador}`,
         { params }
       );
       const pagos = await axios.get(
-        `${REACT_APP_SERVER_URL}/api/getInfoPagos/${id_administrador}`
+        `${REACT_APP_SERVER_URL}/getInfoPagos/${id_administrador}`
       );
       setDatosPagos(response.data);
       setDatosPagosTotal(pagos.data);

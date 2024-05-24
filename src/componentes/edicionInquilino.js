@@ -33,7 +33,7 @@ function EditoInquilino() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length === 0) {
           setEdificios([]);
@@ -59,7 +59,7 @@ function EditoInquilino() {
 
           axios
             .post(
-              `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+              `${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`,
               diccionario
             )
             .then((resultado) => {
@@ -86,7 +86,7 @@ function EditoInquilino() {
 
                 axios
                   .post(
-                    `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+                    `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
                     diccionario2
                   )
                   .then((resultado) => {
@@ -114,7 +114,7 @@ function EditoInquilino() {
 
                       axios
                         .post(
-                          `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+                          `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
                           diccionario3
                         )
                         .then((resultado) => {
@@ -191,10 +191,7 @@ function EditoInquilino() {
       diccionario["id_condominio"] = selectedCondominio.id_condominio;
 
       axios
-        .post(
-          `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
-          diccionario
-        )
+        .post(`${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`, diccionario)
         .then((resultado) => {
           if (resultado.data.length === 0) {
             setEdificios([]);
@@ -218,7 +215,7 @@ function EditoInquilino() {
 
             axios
               .post(
-                `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+                `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
                 diccionario2
               )
               .then((resultado) => {
@@ -243,7 +240,7 @@ function EditoInquilino() {
 
                   axios
                     .post(
-                      `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+                      `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
                       diccionario3
                     )
                     .then((resultado) => {
@@ -303,7 +300,7 @@ function EditoInquilino() {
 
       axios
         .post(
-          `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
+          `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
           diccionario
         )
         .then((resultado) => {
@@ -328,7 +325,7 @@ function EditoInquilino() {
 
             axios
               .post(
-                `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+                `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
                 diccionario3
               )
               .then((resultado) => {
@@ -388,7 +385,7 @@ function EditoInquilino() {
 
       axios
         .post(
-          `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
+          `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
           diccionario
         )
         .then((resultado) => {
@@ -492,7 +489,7 @@ function EditoInquilino() {
 
     try {
       const resultado = await axios.post(
-        `${REACT_APP_SERVER_URL}/api/actualizarInquilino`,
+        `${REACT_APP_SERVER_URL}/actualizarInquilino`,
         formulario
       );
       if (resultado.data === 200) {

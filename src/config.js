@@ -5,4 +5,6 @@ export const DB_USER = process.env.DB_USER || "root";
 export const DB_NAME = process.env.DB_NAME || "bureau-manager";
 export const DB_PORT = process.env.DB_PORT || 3306;
 export const SECRET_KEY = process.env.SECRET_KEY || "secret_key";
-export const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
+export const REACT_APP_SERVER_URL =
+  process.env.REACT_APP_SERVER_URL ||
+  "https://bureau-manager-railway-2-production.up.railway.app/api";

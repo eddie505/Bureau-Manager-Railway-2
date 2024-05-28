@@ -47,7 +47,7 @@ function NuevoInquilino() {
     while (!codigoUnico) {
       codigo_inquilino = generarCodigo(8);
       const respuestaCodigo = await axios.get(
-        `${REACT_APP_SERVER_URL}/verificarCodigoInquilino/${codigo_inquilino}`
+        `${REACT_APP_SERVER_URL}/api/verificarCodigoInquilino/${codigo_inquilino}`
       );
       codigoUnico = !respuestaCodigo.data.existe;
     }
@@ -58,7 +58,7 @@ function NuevoInquilino() {
     const authData = JSON.parse(localStorage.getItem("authData"));
     const id_administrador = parseInt(authData?.id);
     axios
-      .get(`${REACT_APP_SERVER_URL}/getCondominios/${id_administrador}`)
+      .get(`${REACT_APP_SERVER_URL}/api/getCondominios/${id_administrador}`)
       .then((response) => {
         if (response.data.length === 0) {
           setEdificios([]);
@@ -79,7 +79,7 @@ function NuevoInquilino() {
 
           axios
             .post(
-              `${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`,
+              `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
               diccionario
             )
             .then((resultado) => {
@@ -102,7 +102,7 @@ function NuevoInquilino() {
 
                 axios
                   .post(
-                    `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
+                    `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
                     diccionario2
                   )
                   .then((resultado) => {
@@ -161,7 +161,10 @@ function NuevoInquilino() {
       diccionario["id_condominio"] = selectedCondominio.id_condominio;
 
       axios
-        .post(`${REACT_APP_SERVER_URL}/getEdificiosbyCondominio`, diccionario)
+        .post(
+          `${REACT_APP_SERVER_URL}/api/getEdificiosbyCondominio`,
+          diccionario
+        )
         .then((resultado) => {
           if (resultado.data.length === 0) {
             setEdificios([]);
@@ -180,7 +183,7 @@ function NuevoInquilino() {
 
             axios
               .post(
-                `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
+                `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
                 diccionario2
               )
               .then((resultado) => {
@@ -224,7 +227,7 @@ function NuevoInquilino() {
 
       axios
         .post(
-          `${REACT_APP_SERVER_URL}/getDepartamentosbyEdificios`,
+          `${REACT_APP_SERVER_URL}/api/getDepartamentosbyEdificios`,
           diccionario
         )
         .then((resultado) => {
@@ -310,7 +313,7 @@ function NuevoInquilino() {
 
     try {
       const response = await axios.post(
-        `${REACT_APP_SERVER_URL}/getInquilinosbyDepartamento`,
+        `${REACT_APP_SERVER_URL}/api/getInquilinosbyDepartamento`,
         { id_departamento: formulario.id_departamento }
       );
       if (response.data.length > 0) {
@@ -322,7 +325,7 @@ function NuevoInquilino() {
       const codigo = await verificarYGenerarCodigo();
       const nuevoFormulario = { ...formulario, codigo_inquilino: codigo };
       const resultado = await axios.post(
-        `${REACT_APP_SERVER_URL}/registrarInquilino`,
+        `${REACT_APP_SERVER_URL}/api/registrarInquilino`,
         nuevoFormulario
       );
       if (resultado.data === 200) {

@@ -1,9 +1,6 @@
-import { config } from "dotenv";
-config();
-
-export const SECRET_KEY = process.env.SECRET_KEY;
-export const MYSQLHOST = process.env.MYSQLHOST;
-export const MYSQLUSER = process.env.MYSQLUSER;
-export const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
-export const MYSQL_DATABASE = process.env.MY_SQL_DATABASE;
-export const MYSQLPORT = process.env.MYSQLPORT;
+export const SECRET_KEY = "secret_key";
+export const MYSQLHOST = "monorail.proxy.rlwy.net";
+export const MYSQLUSER = "root";
+export const MYSQL_ROOT_PASSWORD = "gTiWfXvJzZwpOyRADjjhknTGPESchiuZ";
+export const MYSQL_DATABASE = "railway";
+export const MYSQLPORT = 57372;

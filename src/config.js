@@ -1,9 +1,9 @@
-export const PORT = 4000;
-export const DB_HOST = "monorail.proxy.rlwy.net";
-export const DB_PASSWORD = "gTiWfXvJzZwpOyRADjjhknTGPESchiuZ";
-export const DB_USER = "root";
-export const DB_NAME = "railway";
-export const DB_PORT = 57372;
-export const SECRET_KEY = "secret_key";
-export const REACT_APP_SERVER_URL =
-  "https://bureau-manager-railway-2-production.up.railway.app";
+import { config } from "dotenv";
+config();
+
+export const SECRET_KEY = process.env.SECRET_KEY;
+export const MYSQLHOST = process.env.MYSQLHOST;
+export const MYSQLUSER = process.env.MYSQLUSER;
+export const MYSQL_ROOT_PASSWORD = process.env.MYSQL_ROOT_PASSWORD;
+export const MYSQL_DATABASE = process.env.MY_SQL_DATABASE;
+export const MYSQLPORT = process.env.MYSQLPORT;

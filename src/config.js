@@ -4,3 +4,5 @@ export const MYSQLUSER = "root";
 export const MYSQL_ROOT_PASSWORD = "gTiWfXvJzZwpOyRADjjhknTGPESchiuZ";
 export const MYSQL_DATABASE = "railway";
 export const MYSQLPORT = 57372;
+export const REACT_APP_SERVER_URL =
+  "https://bureau-manager-railway-2-production.up.railway.app";
